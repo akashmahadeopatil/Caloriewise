@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us — CalorieWise</title>
+<meta name="description" content="Contact Us page for CalorieWise — Free Smart Calorie & Nutrition Tracker.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--p:#6C63FF;--pd:#5A52D5;--s:#FF6584;--a:#43E97B;--bg:#0B0B15;--bg2:#12122A;--bg3:#16213E;--c:#161630;--t:#E8E8F0;--td:#8888A8;--dn:#FF4757;--wn:#FFA502;--ok:#2ED573;--in:#1E90FF;--bd:rgba(255,255,255,0.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;overflow-x:hidden}
+.bg-a{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.bg-a .o{position:absolute;border-radius:50%;opacity:.04;animation:ob 25s infinite ease-in-out}
+.bg-a .o:nth-child(1){width:700px;height:700px;background:var(--p);top:-250px;left:-150px}
+.bg-a .o:nth-child(2){width:500px;height:500px;background:var(--s);bottom:-150px;right:-100px;animation-delay:-8s}
+.bg-a .o:nth-child(3){width:400px;height:400px;background:var(--a);top:40%;left:60%;animation-delay:-15s}
+@keyframes ob{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-60px) scale(1.08)}66%{transform:translate(-30px,30px) scale(.92)}}
+.ctn{max-width:900px;margin:0 auto;padding:16px;position:relative;z-index:1}
+/* Nav */
+nav{display:flex;justify-content:space-between;align-items:center;padding:18px 0;flex-wrap:wrap;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo h1{font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,var(--p),var(--s),var(--a));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:6px;flex-wrap:wrap}
+.nav-links a{padding:8px 16px;border-radius:10px;font-size:.82rem;font-weight:500;color:var(--td);text-decoration:none;transition:all .3s;border:1px solid transparent}
+.nav-links a:hover{color:var(--p);border-color:rgba(108,99,255,.3)}
+.nav-links a.act{color:var(--p);background:rgba(108,99,255,.1);border-color:rgba(108,99,255,.3)}
+/* Hero */
+.hero{text-align:center;padding:50px 20px 30px}
+.hero .emoji{font-size:3.5rem;margin-bottom:16px;display:block}
+.hero h2{font-size:2.2rem;font-weight:800;margin-bottom:10px;background:linear-gradient(135deg,var(--p),var(--s));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--td);font-size:1rem;max-width:600px;margin:0 auto}
+/* Card */
+.card{background:var(--c);border-radius:20px;padding:36px;border:1px solid var(--bd);margin:20px 0;line-height:1.8}
+.card h3{font-size:1.2rem;font-weight:700;margin:28px 0 12px;color:var(--t);display:flex;align-items:center;gap:8px}
+.card h3:first-child{margin-top:0}
+.card p{color:var(--td);font-size:.92rem;margin-bottom:14px}
+.card ul{color:var(--td);font-size:.92rem;margin:10px 0 18px 24px}
+.card ul li{margin-bottom:8px}
+.card ul li strong{color:var(--t)}
+.card a{color:var(--p);text-decoration:none}.card a:hover{text-decoration:underline}
+.highlight{background:rgba(108,99,255,.08);border-left:4px solid var(--p);padding:14px 18px;border-radius:0 12px 12px 0;margin:16px 0}
+.highlight p{margin:0;color:var(--t)}
+/* Contact Form */
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:.82rem;color:var(--td);margin-bottom:6px;font-weight:500}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:14px 16px;border-radius:12px;border:2px solid var(--bd);background:var(--bg2);color:var(--t);font-size:.95rem;font-family:inherit;outline:none;transition:all .3s}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--p);box-shadow:0 0 20px rgba(108,99,255,.12)}
+.form-group textarea{resize:vertical;min-height:140px}
+.btn-submit{padding:14px 32px;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;font-family:inherit;background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;width:100%;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(108,99,255,.4)}
+/* Info Cards Row */
+.info-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:24px 0}
+.info-card{background:var(--c);border-radius:16px;padding:24px;border:1px solid var(--bd);text-align:center}
+.info-card .ic-emoji{font-size:2rem;margin-bottom:10px}
+.info-card h4{font-size:1rem;font-weight:600;margin-bottom:6px}
+.info-card p{font-size:.85rem;color:var(--td)}
+.info-card a{color:var(--p);text-decoration:none;font-weight:500}.info-card a:hover{text-decoration:underline}
+/* Feature list */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:24px 0}
+.feat{background:rgba(108,99,255,.05);border-radius:14px;padding:20px;border:1px solid rgba(108,99,255,.1)}
+.feat .fe{font-size:1.8rem;margin-bottom:8px}
+.feat h4{font-size:.95rem;font-weight:600;margin-bottom:4px}
+.feat p{font-size:.82rem;color:var(--td);line-height:1.5}
+/* Update date */
+.update{text-align:center;color:var(--td);font-size:.8rem;margin:20px 0}
+/* Footer */
+footer{text-align:center;padding:40px 20px;color:var(--td);font-size:.78rem;margin-top:20px;line-height:1.8;border-top:1px solid var(--bd)}
+footer a{color:var(--p);text-decoration:none}
+@media(max-width:600px){.hero h2{font-size:1.6rem}.card{padding:22px}.nav-links a{padding:6px 10px;font-size:.75rem}}
+</style>
+</head>
+<body>
+<div class="bg-a"><div class="o"></div><div class="o"></div><div class="o"></div></div>
+<div class="ctn">
+<nav>
+<a href="index.html" class="logo"><h1>🔥 CalorieWise</h1></a>
+<div class="nav-links">
+<a href="index.html" >🏠 Home</a>
+<a href="about.html" >ℹ️ About</a>
+<a href="contact.html" class='act'>📬 Contact</a>
+<a href="privacy.html" >🔒 Privacy</a>
+<a href="disclaimer.html" >⚠️ Disclaimer</a>
+</div>
+</nav>
+<div class="hero">
+<span class="emoji">📬</span>
+<h2>Contact Us</h2>
+</div>
+
+<p class="hero" style="padding:0 20px 20px;"><span style="color:var(--td);font-size:1rem;">Have questions, feedback, or ideas? We'd love to hear from you!</span></p>
+
+<div class="info-row">
+<div class="info-card">
+<div class="ic-emoji">📧</div>
+<h4>Email Us</h4>
+<p><a href="mailto:akash.patil201298@gmail.com">akash.patil201298@gmail.com</a></p>
+</div>
+<div class="info-card">
+<div class="ic-emoji">📍</div>
+<h4>Location</h4>
+<p>Pune, Maharashtra<br>India 🇮🇳</p>
+</div>
+<div class="info-card">
+<div class="ic-emoji">⏰</div>
+<h4>Response Time</h4>
+<p>We typically respond within <strong>24-48 hours</strong></p>
+</div>
+</div>
+
+<div class="card">
+<h3>📬 Send Us a Message</h3>
+<p>Fill out the form below and we'll get back to you as soon as possible.</p>
+
+<form id="contactForm" onsubmit="return handleSubmit(event)">
+<div class="form-group">
+<label>Your Name *</label>
+<input type="text" id="userName" placeholder="Enter your full name" required>
+</div>
+<div class="form-group">
+<label>Email Address *</label>
+<input type="email" id="userEmail" placeholder="your.email@example.com" required>
+</div>
+<div class="form-group">
+<label>Subject *</label>
+<select id="userSubject" required>
+<option value="" disabled selected>Select a topic...</option>
+<option value="feedback">💬 General Feedback</option>
+<option value="bug">🐛 Bug Report</option>
+<option value="feature">✨ Feature Request</option>
+<option value="food">🍽️ Food Database (Missing/Wrong Food)</option>
+<option value="business">💼 Business Inquiry / Partnership</option>
+<option value="other">📝 Other</option>
+</select>
+</div>
+<div class="form-group">
+<label>Message *</label>
+<textarea id="userMessage" placeholder="Tell us what's on your mind..." required></textarea>
+</div>
+<button type="submit" class="btn-submit">📤 Send Message</button>
+</form>
+
+<div id="successMsg" style="display:none;text-align:center;padding:30px;margin-top:20px;background:rgba(46,213,115,.08);border-radius:14px;border:1px solid rgba(46,213,115,.2)">
+<div style="font-size:3rem;margin-bottom:12px">✅</div>
+<h3 style="color:var(--ok);margin:0 0 8px">Message Sent!</h3>
+<p style="margin:0">Thank you for reaching out. We'll get back to you within 24-48 hours.</p>
+</div>
+</div>
+
+<div class="card">
+<h3>💡 Frequently Asked Questions</h3>
+
+<h3 style="font-size:1rem;margin-top:20px">Is CalorieWise really free?</h3>
+<p>Yes, 100% free! No hidden charges, no premium plans, no subscriptions. CalorieWise is and will always be free to use.</p>
+
+<h3 style="font-size:1rem">Do I need to create an account?</h3>
+<p>No. CalorieWise requires zero sign-up. Just open the website and start tracking. Your privacy is our priority.</p>
+
+<h3 style="font-size:1rem">How do I add foods not in the database?</h3>
+<p>Connect the free USDA FoodData Central API for access to 300,000+ foods worldwide. Click the "Connect USDA API" button on the home page to get started.</p>
+
+<h3 style="font-size:1rem">Is my data safe?</h3>
+<p>Absolutely. All your food data stays in your browser only — nothing is sent to any server. Read our full <a href="privacy.html">Privacy Policy</a> for details.</p>
+
+<h3 style="font-size:1rem">Can I use CalorieWise on my phone?</h3>
+<p>Yes! CalorieWise is fully responsive and works beautifully on smartphones, tablets, and desktops.</p>
+</div>
+
+<script>
+function handleSubmit(e) {
+    e.preventDefault();
+    var name = document.getElementById('userName').value;
+    var email = document.getElementById('userEmail').value;
+    var subject = document.getElementById('userSubject').value;
+    var message = document.getElementById('userMessage').value;
+    // For a static site, we use mailto as fallback
+    var mailtoLink = 'mailto:akash.patil201298@gmail.com?subject=' + encodeURIComponent('[CalorieWise] ' + subject) + '&body=' + encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + message);
+    window.location.href = mailtoLink;
+    document.getElementById('contactForm').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+    return false;
+}
+</script>
+
+<footer>
+<p>🔥 <strong>CalorieWise</strong> — Free Smart Calorie & Nutrition Tracker</p>
+<p><a href="index.html">Home</a> · <a href="about.html">About</a> · <a href="contact.html">Contact</a> · <a href="privacy.html">Privacy Policy</a> · <a href="disclaimer.html">Disclaimer</a></p>
+<p>&copy; 2026 CalorieWise. All rights reserved.</p>
+</footer>
+</div>
+</body>
+</html>

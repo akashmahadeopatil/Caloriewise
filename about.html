@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us — CalorieWise</title>
+<meta name="description" content="About Us page for CalorieWise — Free Smart Calorie & Nutrition Tracker.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--p:#6C63FF;--pd:#5A52D5;--s:#FF6584;--a:#43E97B;--bg:#0B0B15;--bg2:#12122A;--bg3:#16213E;--c:#161630;--t:#E8E8F0;--td:#8888A8;--dn:#FF4757;--wn:#FFA502;--ok:#2ED573;--in:#1E90FF;--bd:rgba(255,255,255,0.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;overflow-x:hidden}
+.bg-a{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.bg-a .o{position:absolute;border-radius:50%;opacity:.04;animation:ob 25s infinite ease-in-out}
+.bg-a .o:nth-child(1){width:700px;height:700px;background:var(--p);top:-250px;left:-150px}
+.bg-a .o:nth-child(2){width:500px;height:500px;background:var(--s);bottom:-150px;right:-100px;animation-delay:-8s}
+.bg-a .o:nth-child(3){width:400px;height:400px;background:var(--a);top:40%;left:60%;animation-delay:-15s}
+@keyframes ob{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-60px) scale(1.08)}66%{transform:translate(-30px,30px) scale(.92)}}
+.ctn{max-width:900px;margin:0 auto;padding:16px;position:relative;z-index:1}
+/* Nav */
+nav{display:flex;justify-content:space-between;align-items:center;padding:18px 0;flex-wrap:wrap;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo h1{font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,var(--p),var(--s),var(--a));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:6px;flex-wrap:wrap}
+.nav-links a{padding:8px 16px;border-radius:10px;font-size:.82rem;font-weight:500;color:var(--td);text-decoration:none;transition:all .3s;border:1px solid transparent}
+.nav-links a:hover{color:var(--p);border-color:rgba(108,99,255,.3)}
+.nav-links a.act{color:var(--p);background:rgba(108,99,255,.1);border-color:rgba(108,99,255,.3)}
+/* Hero */
+.hero{text-align:center;padding:50px 20px 30px}
+.hero .emoji{font-size:3.5rem;margin-bottom:16px;display:block}
+.hero h2{font-size:2.2rem;font-weight:800;margin-bottom:10px;background:linear-gradient(135deg,var(--p),var(--s));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--td);font-size:1rem;max-width:600px;margin:0 auto}
+/* Card */
+.card{background:var(--c);border-radius:20px;padding:36px;border:1px solid var(--bd);margin:20px 0;line-height:1.8}
+.card h3{font-size:1.2rem;font-weight:700;margin:28px 0 12px;color:var(--t);display:flex;align-items:center;gap:8px}
+.card h3:first-child{margin-top:0}
+.card p{color:var(--td);font-size:.92rem;margin-bottom:14px}
+.card ul{color:var(--td);font-size:.92rem;margin:10px 0 18px 24px}
+.card ul li{margin-bottom:8px}
+.card ul li strong{color:var(--t)}
+.card a{color:var(--p);text-decoration:none}.card a:hover{text-decoration:underline}
+.highlight{background:rgba(108,99,255,.08);border-left:4px solid var(--p);padding:14px 18px;border-radius:0 12px 12px 0;margin:16px 0}
+.highlight p{margin:0;color:var(--t)}
+/* Contact Form */
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:.82rem;color:var(--td);margin-bottom:6px;font-weight:500}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:14px 16px;border-radius:12px;border:2px solid var(--bd);background:var(--bg2);color:var(--t);font-size:.95rem;font-family:inherit;outline:none;transition:all .3s}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--p);box-shadow:0 0 20px rgba(108,99,255,.12)}
+.form-group textarea{resize:vertical;min-height:140px}
+.btn-submit{padding:14px 32px;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;font-family:inherit;background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;width:100%;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(108,99,255,.4)}
+/* Info Cards Row */
+.info-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:24px 0}
+.info-card{background:var(--c);border-radius:16px;padding:24px;border:1px solid var(--bd);text-align:center}
+.info-card .ic-emoji{font-size:2rem;margin-bottom:10px}
+.info-card h4{font-size:1rem;font-weight:600;margin-bottom:6px}
+.info-card p{font-size:.85rem;color:var(--td)}
+.info-card a{color:var(--p);text-decoration:none;font-weight:500}.info-card a:hover{text-decoration:underline}
+/* Feature list */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:24px 0}
+.feat{background:rgba(108,99,255,.05);border-radius:14px;padding:20px;border:1px solid rgba(108,99,255,.1)}
+.feat .fe{font-size:1.8rem;margin-bottom:8px}
+.feat h4{font-size:.95rem;font-weight:600;margin-bottom:4px}
+.feat p{font-size:.82rem;color:var(--td);line-height:1.5}
+/* Update date */
+.update{text-align:center;color:var(--td);font-size:.8rem;margin:20px 0}
+/* Footer */
+footer{text-align:center;padding:40px 20px;color:var(--td);font-size:.78rem;margin-top:20px;line-height:1.8;border-top:1px solid var(--bd)}
+footer a{color:var(--p);text-decoration:none}
+@media(max-width:600px){.hero h2{font-size:1.6rem}.card{padding:22px}.nav-links a{padding:6px 10px;font-size:.75rem}}
+</style>
+</head>
+<body>
+<div class="bg-a"><div class="o"></div><div class="o"></div><div class="o"></div></div>
+<div class="ctn">
+<nav>
+<a href="index.html" class="logo"><h1>🔥 CalorieWise</h1></a>
+<div class="nav-links">
+<a href="index.html" >🏠 Home</a>
+<a href="about.html" class='act'>ℹ️ About</a>
+<a href="contact.html" >📬 Contact</a>
+<a href="privacy.html" >🔒 Privacy</a>
+<a href="disclaimer.html" >⚠️ Disclaimer</a>
+</div>
+</nav>
+<div class="hero">
+<span class="emoji">ℹ️</span>
+<h2>About Us</h2>
+</div>
+
+<p class="hero" style="padding:0 20px 20px;"><span style="color:var(--td);font-size:1rem;">Track what you eat. Transform how you live.</span></p>
+
+<div class="card">
+<h3>🎯 Our Mission</h3>
+<p>CalorieWise was created with a simple mission: <strong>make nutrition tracking effortless, free, and accessible to everyone on the planet.</strong></p>
+<p>We believe that understanding what you eat is the first step toward a healthier life. But most calorie tracking apps are either too expensive, too complicated, or require you to create accounts and hand over your personal data. We wanted to change that.</p>
+
+<h3>🔥 What is CalorieWise?</h3>
+<p>CalorieWise is a <strong>free, smart calorie and nutrition tracker</strong> that works right in your browser. No downloads. No sign-ups. No subscriptions. Just open the website, type the food you ate, and get instant insights.</p>
+
+<div class="highlight">
+<p><strong>💡 Just type any food name → Get instant calorie count + full macro breakdown + personalized diet suggestions</strong></p>
+</div>
+
+<h3>✨ Key Features</h3>
+</div>
+
+<div class="feat-grid">
+<div class="feat"><div class="fe">🍽️</div><h4>500+ Built-in Foods</h4><p>Indian, Chinese, Japanese, Korean, Thai, Italian, Mexican, Middle Eastern, African & Western cuisines — all pre-loaded.</p></div>
+<div class="feat"><div class="fe">🌍</div><h4>300,000+ Foods via USDA</h4><p>Connect the free USDA FoodData Central API and search virtually any food on Earth.</p></div>
+<div class="feat"><div class="fe">📊</div><h4>Real-Time Dashboard</h4><p>Live tracking of calories, protein, carbs, fat, and fiber with beautiful progress bars.</p></div>
+<div class="feat"><div class="fe">💡</div><h4>Smart Suggestions</h4><p>AI-powered diet tips, healthy food swaps, protein/fiber alerts, and hydration reminders.</p></div>
+<div class="feat"><div class="fe">🔒</div><h4>100% Private</h4><p>No accounts, no cookies, no tracking. Everything runs locally in your browser.</p></div>
+<div class="feat"><div class="fe">📱</div><h4>Works Everywhere</h4><p>Responsive design that looks beautiful on desktop, tablet, and mobile devices.</p></div>
+</div>
+
+<div class="card">
+<h3>👨‍💻 Who Built This?</h3>
+<p>CalorieWise was built by <strong>Akash Patil</strong>, a technology professional based in Pune, India, who is passionate about health, fitness, and making useful tools accessible to everyone.</p>
+<p>This project started as a personal calorie tracker and grew into a full-fledged nutrition platform designed to help people worldwide make better dietary choices — without spending a single rupee.</p>
+
+<h3>🛠️ Technology</h3>
+<p>CalorieWise is built with modern web technologies for speed and simplicity:</p>
+<ul>
+<li><strong>HTML5</strong> — Semantic, accessible structure</li>
+<li><strong>CSS3</strong> — Custom properties, animations, responsive grid layout</li>
+<li><strong>Vanilla JavaScript</strong> — Zero frameworks, zero dependencies, lightning fast</li>
+<li><strong>USDA FoodData Central API</strong> — World's most comprehensive food nutrition database</li>
+</ul>
+<p>The entire application runs from a single HTML file — no servers, no databases, no complex infrastructure. This means it loads instantly and works even on slow connections.</p>
+
+<h3>📬 Get in Touch</h3>
+<p>Have feedback, suggestions, or want to collaborate? We'd love to hear from you! Visit our <a href="contact.html">Contact page</a> to reach out.</p>
+</div>
+
+<footer>
+<p>🔥 <strong>CalorieWise</strong> — Free Smart Calorie & Nutrition Tracker</p>
+<p><a href="index.html">Home</a> · <a href="about.html">About</a> · <a href="contact.html">Contact</a> · <a href="privacy.html">Privacy Policy</a> · <a href="disclaimer.html">Disclaimer</a></p>
+<p>&copy; 2026 CalorieWise. All rights reserved.</p>
+</footer>
+</div>
+</body>
+</html>
