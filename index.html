@@ -116,27 +116,29 @@ footer a{color:var(--p);text-decoration:none}
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:16px 20px;
+    padding:14px 20px;
     background:#0B0B15;
     border-bottom:1px solid rgba(255,255,255,0.08);
     position:sticky;
     top:0;
     z-index:1000;
+    flex-wrap:wrap;
+    gap:10px;
 ">
-    <div style="font-weight:800;font-size:1.2rem;color:#6C63FF;">
+    <a href="index.html" style="font-weight:800;font-size:1.2rem;color:#6C63FF;text-decoration:none;">
         🔥 CalorieWise
-    </div>
-    <div style="display:flex;gap:14px;flex-wrap:wrap;">
-        <a href="index.html" style="color:#6C63FF;text-decoration:none;">Home</a>
-        <a href="about.html" style="color:#aaa;text-decoration:none;">About</a>
-        <a href="contact.html" style="color:#aaa;text-decoration:none;">Contact</a>
-        <a href="privacy.html" style="color:#aaa;text-decoration:none;">Privacy</a>
-        <a href="disclaimer.html" style="color:#aaa;text-decoration:none;">Disclaimer</a>
+    </a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="index.html" style="padding:6px 14px;border-radius:10px;font-size:.8rem;color:#6C63FF;text-decoration:none;background:rgba(108,99,255,0.1);border:1px solid rgba(108,99,255,0.3);">🏠 Home</a>
+        <a href="blog.html" style="padding:6px 14px;border-radius:10px;font-size:.8rem;color:#8888A8;text-decoration:none;border:1px solid rgba(255,255,255,0.06);">📝 Blog</a>
+        <a href="about.html" style="padding:6px 14px;border-radius:10px;font-size:.8rem;color:#8888A8;text-decoration:none;border:1px solid rgba(255,255,255,0.06);">ℹ️ About</a>
+        <a href="contact.html" style="padding:6px 14px;border-radius:10px;font-size:.8rem;color:#8888A8;text-decoration:none;border:1px solid rgba(255,255,255,0.06);">📬 Contact</a>
+        <a href="privacy.html" style="padding:6px 14px;border-radius:10px;font-size:.8rem;color:#8888A8;text-decoration:none;border:1px solid rgba(255,255,255,0.06);">🔒 Privacy</a>
+        <a href="disclaimer.html" style="padding:6px 14px;border-radius:10px;font-size:.8rem;color:#8888A8;text-decoration:none;border:1px solid rgba(255,255,255,0.06);">⚠️ Disclaimer</a>
     </div>
 </nav>
 <!-- ===== End Navigation Bar ===== -->
 <div class="bg-a"><div class="o"></div><div class="o"></div><div class="o"></div></div>
-
 <!-- ===== MODAL (placed FIRST for z-index reliability) ===== -->
 <div class="mo" id="modal">
 <div class="mx">
