@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CalorieWise — Free Smart Calorie Tracker</title>
+<meta name="description" content="Free calorie tracker. Search any food, track calories, protein, carbs, fat. Smart diet suggestions.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--p:#6C63FF;--pd:#5A52D5;--s:#FF6584;--a:#43E97B;--bg:#0B0B15;--bg2:#12122A;--bg3:#16213E;--c:#161630;--t:#E8E8F0;--td:#8888A8;--dn:#FF4757;--wn:#FFA502;--ok:#2ED573;--in:#1E90FF;--bd:rgba(255,255,255,0.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;overflow-x:hidden}
+.bg-a{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.bg-a .o{position:absolute;border-radius:50%;opacity:.04;animation:ob 25s infinite ease-in-out}
+.bg-a .o:nth-child(1){width:700px;height:700px;background:var(--p);top:-250px;left:-150px}
+.bg-a .o:nth-child(2){width:500px;height:500px;background:var(--s);bottom:-150px;right:-100px;animation-delay:-8s}
+.bg-a .o:nth-child(3){width:400px;height:400px;background:var(--a);top:40%;left:60%;animation-delay:-15s}
+@keyframes ob{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-60px) scale(1.08)}66%{transform:translate(-30px,30px) scale(.92)}}
+.ctn{max-width:1280px;margin:0 auto;padding:16px;position:relative;z-index:1}
+.top{display:flex;justify-content:space-between;align-items:center;padding:18px 0 10px;flex-wrap:wrap;gap:12px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo h1{font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,var(--p),var(--s),var(--a));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-t{font-size:.75rem;color:var(--td)}
+.abtn{padding:10px 20px;border-radius:12px;border:1px solid var(--bd);background:var(--c);color:var(--td);font-size:.85rem;cursor:pointer;font-family:inherit;transition:all .3s;display:flex;align-items:center;gap:8px;position:relative;z-index:10}
+.abtn:hover{border-color:var(--p);color:var(--p);background:#1e1e3a}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--dn);display:inline-block}
+.dot.on{background:var(--ok)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:20px 0}
+.st{background:var(--c);border-radius:16px;padding:20px;text-align:center;border:1px solid var(--bd);transition:all .3s}
+.st:hover{transform:translateY(-3px);border-color:rgba(108,99,255,.3)}
+.st .ic{font-size:1.6rem}.st .vl{font-size:1.8rem;font-weight:800;margin:4px 0}.st .lb{font-size:.7rem;color:var(--td);text-transform:uppercase;letter-spacing:1.5px}
+.st:nth-child(1) .vl{color:var(--p)}.st:nth-child(2) .vl{color:#9B59B6}.st:nth-child(3) .vl{color:var(--wn)}.st:nth-child(4) .vl{color:var(--s)}.st:nth-child(5) .vl{color:var(--a)}
+.ps{margin:10px 0 20px}.ph{display:flex;justify-content:space-between;font-size:.85rem;color:var(--td);margin-bottom:8px}
+.pb{width:100%;height:16px;background:var(--c);border-radius:10px;overflow:hidden;border:1px solid var(--bd)}
+.pf{height:100%;border-radius:10px;transition:width .8s,background .5s;background:linear-gradient(90deg,var(--a),var(--p))}
+.pf.w{background:linear-gradient(90deg,var(--wn),#FF6348)}.pf.ov{background:linear-gradient(90deg,var(--dn),#e74c3c)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:500px){.stats{grid-template-columns:repeat(2,1fr)}.logo h1{font-size:1.4rem}}
+.cd{background:var(--c);border-radius:20px;padding:24px;border:1px solid var(--bd)}
+.cd h2{font-size:1.15rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.ig{position:relative;margin-bottom:14px}
+.ig label{display:block;font-size:.78rem;color:var(--td);margin-bottom:5px;font-weight:500}
+.ig input,.ig select{width:100%;padding:14px 16px;border-radius:12px;border:2px solid var(--bd);background:var(--bg2);color:var(--t);font-size:.95rem;font-family:inherit;outline:none;transition:all .3s}
+.ig input:focus,.ig select:focus{border-color:var(--p);box-shadow:0 0 20px rgba(108,99,255,.12)}
+.ig input::placeholder{color:#555570}
+.si{position:absolute;right:14px;top:50%;transform:translateY(-50%);margin-top:10px;color:var(--td);pointer-events:none}
+.al{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border-radius:12px;max-height:260px;overflow-y:auto;z-index:100;display:none;border:1px solid rgba(255,255,255,.1);box-shadow:0 15px 50px rgba(0,0,0,.5)}
+.al.sh{display:block}
+.ai{padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background .2s;border-bottom:1px solid rgba(255,255,255,.03)}
+.ai:hover{background:rgba(108,99,255,.12)}.ai:last-child{border:none}
+.af{font-weight:500;font-size:.9rem}
+.am{display:flex;gap:6px;align-items:center}
+.ac{font-size:.75rem;color:var(--p);background:rgba(108,99,255,.12);padding:3px 10px;border-radius:20px;font-weight:600}
+.as{font-size:.6rem;color:var(--td);background:rgba(255,255,255,.05);padding:2px 7px;border-radius:8px}
+.ald{padding:20px;text-align:center;color:var(--td);font-size:.85rem}
+.mls{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.ml{padding:7px 16px;border-radius:20px;font-size:.8rem;font-weight:500;cursor:pointer;border:2px solid var(--bd);background:transparent;color:var(--td);transition:all .3s;font-family:inherit}
+.ml.act{border-color:var(--p);color:var(--p);background:rgba(108,99,255,.1)}.ml:hover{border-color:var(--p)}
+.qr{display:flex;gap:10px;margin-bottom:14px}.qr .ig{flex:1}
+.gr{display:flex;align-items:center;gap:10px;margin-bottom:14px;background:rgba(108,99,255,.06);padding:10px 14px;border-radius:12px}
+.gr span{font-size:.85rem;color:var(--td)}
+.gr input{width:90px;padding:8px 10px;border-radius:8px;border:2px solid var(--bd);background:var(--bg2);color:var(--t);font-size:.95rem;text-align:center;font-family:inherit;outline:none}
+.gr input:focus{border-color:var(--p)}
+.btn{padding:13px 24px;border:none;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .3s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.bp{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;width:100%}
+.bp:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(108,99,255,.4)}.bp:active{transform:translateY(0)}
+.bc{background:rgba(255,255,255,.04);color:var(--td);width:100%;margin-top:10px;font-size:.85rem;padding:10px}.bc:hover{background:rgba(255,255,255,.08)}
+.db{background:none;border:none;color:var(--dn);cursor:pointer;font-size:1.1rem;opacity:.4;transition:opacity .2s;padding:4px 8px}.db:hover{opacity:1}
+.mc{margin-top:24px}.mb{margin-bottom:12px}
+.mh{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:5px}
+.mn{font-weight:500}.mv{color:var(--td)}
+.mt{width:100%;height:8px;background:rgba(255,255,255,.04);border-radius:5px;overflow:hidden}
+.mf{height:100%;border-radius:5px;transition:width .8s}
+.mf.pr{background:linear-gradient(90deg,#6C63FF,#9B59B6)}.mf.cr{background:linear-gradient(90deg,#FFA502,#FF6348)}
+.mf.ft{background:linear-gradient(90deg,#FF6584,#FF4757)}.mf.fb{background:linear-gradient(90deg,#43E97B,#38F9D7)}
+.fl{max-height:500px;overflow-y:auto}.fl::-webkit-scrollbar{width:5px}.fl::-webkit-scrollbar-thumb{background:var(--p);border-radius:3px}
+.fi{display:flex;align-items:center;padding:12px 14px;border-radius:12px;margin-bottom:6px;background:rgba(255,255,255,.02);border:1px solid var(--bd);transition:all .3s;animation:sI .3s ease}
+.fi:hover{background:rgba(255,255,255,.05)}
+@keyframes sI{from{opacity:0;transform:translateX(-15px)}to{opacity:1;transform:translateX(0)}}
+.fn{font-weight:600;font-size:.9rem}.fd{font-size:.72rem;color:var(--td);margin-top:2px}
+.fc{font-weight:700;font-size:1.05rem;color:var(--p);margin:0 14px;white-space:nowrap;flex-shrink:0}
+.fi-i{flex:1;min-width:0}
+.em{text-align:center;padding:35px 20px;color:var(--td)}.em .ei{font-size:2.5rem;margin-bottom:10px}
+.mlb{font-size:.7rem;color:var(--td);padding:10px 4px 4px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+.ss{margin-top:20px}
+.sg{padding:14px 18px;border-radius:14px;margin-bottom:10px;border-left:4px solid;animation:fI .5s ease}
+@keyframes fI{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sg.tp{border-color:var(--in);background:rgba(30,144,255,.06)}
+.sg.wn{border-color:var(--wn);background:rgba(255,165,2,.06)}
+.sg.su{border-color:var(--ok);background:rgba(46,213,115,.06)}
+.sg.dn{border-color:var(--dn);background:rgba(255,71,87,.06)}
+.sg h4{font-size:.88rem;font-weight:600;margin-bottom:3px}.sg p{font-size:.8rem;color:var(--td);line-height:1.5}
+/* MODAL */
+.mo{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.75);z-index:9999;justify-content:center;align-items:center}
+.mo.vis{display:flex !important}
+.mx{background:var(--c);border-radius:20px;padding:32px;max-width:500px;width:90%;border:1px solid var(--bd);position:relative;z-index:10000}
+.mx h3{font-size:1.2rem;margin-bottom:16px}.mx p{font-size:.85rem;color:var(--td);line-height:1.6;margin-bottom:14px}
+.mx p a{color:var(--p)}
+.mx input{width:100%;padding:14px;border-radius:12px;border:2px solid var(--bd);background:var(--bg2);color:var(--t);font-size:.95rem;font-family:inherit;outline:none;margin-bottom:14px}
+.mx input:focus{border-color:var(--p)}
+.mr{display:flex;gap:10px}
+.mr button{flex:1;padding:12px;border:none;border-radius:12px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .3s}
+.mr .ms{background:var(--p);color:#fff}.mr .ms:hover{background:var(--pd)}
+.mr .mc2{background:rgba(255,255,255,.05);color:var(--td)}.mr .mc2:hover{background:rgba(255,255,255,.1)}
+footer{text-align:center;padding:40px 20px;color:var(--td);font-size:.78rem;margin-top:30px;line-height:1.8}
+footer a{color:var(--p);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="bg-a"><div class="o"></div><div class="o"></div><div class="o"></div></div>
+
+<!-- ===== MODAL (placed FIRST for z-index reliability) ===== -->
+<div class="mo" id="modal">
+<div class="mx">
+<h3>🔗 Connect USDA FoodData Central API</h3>
+<p>To search <strong>300,000+ foods worldwide</strong>, connect the free USDA API.<br>Without it, you still get <strong>500+ built-in foods</strong>.</p>
+<p><strong>Get your free API key (2 minutes):</strong><br>
+1. Go to <a href="https://fdc.nal.usda.gov/api-key-signup" target="_blank">fdc.nal.usda.gov/api-key-signup</a><br>
+2. Enter your name & email<br>
+3. Check your email for the API key<br>
+4. Paste it below 👇</p>
+<input type="text" id="keyInp" placeholder="Paste your USDA API key here...">
+<div class="mr">
+<button class="mc2" id="cancelBtn">Cancel</button>
+<button class="ms" id="saveBtn">Save & Connect</button>
+</div>
+</div>
+</div>
+
+<div class="ctn">
+<div class="top">
+<div class="logo"><h1>🔥 CalorieWise</h1><span class="logo-t">Smart Calorie Tracker</span></div>
+<button class="abtn" id="apiBtn"><span class="dot" id="apiDot"></span><span id="apiLbl">Connect USDA API</span></button>
+</div>
+<div class="stats">
+<div class="st"><div class="ic">🔥</div><div class="vl" id="sCal">0</div><div class="lb">Calories</div></div>
+<div class="st"><div class="ic">🥩</div><div class="vl" id="sPro">0g</div><div class="lb">Protein</div></div>
+<div class="st"><div class="ic">🍞</div><div class="vl" id="sCrb">0g</div><div class="lb">Carbs</div></div>
+<div class="st"><div class="ic">🥑</div><div class="vl" id="sFat">0g</div><div class="lb">Fat</div></div>
+<div class="st"><div class="ic">🥬</div><div class="vl" id="sFib">0g</div><div class="lb">Fiber</div></div>
+</div>
+<div class="ps">
+<div class="ph"><span>Daily Calorie Progress</span><span id="pTx">0 / 2000 kcal</span></div>
+<div class="pb"><div class="pf" id="pFl" style="width:0%"></div></div>
+</div>
+<div class="grid">
+<div>
+<div class="cd">
+<h2>🍽️ Add Food</h2>
+<div class="gr"><span>🎯 Daily Goal:</span><input type="number" id="gInp" value="2000" min="800" max="10000"><span>kcal</span></div>
+<div class="mls">
+<button class="ml act" data-meal="Breakfast">🌅 Breakfast</button>
+<button class="ml" data-meal="Lunch">☀️ Lunch</button>
+<button class="ml" data-meal="Dinner">🌙 Dinner</button>
+<button class="ml" data-meal="Snack">🍿 Snack</button>
+</div>
+<div class="ig" style="position:relative">
+<label>Search Food</label>
+<input type="text" id="fInp" placeholder="Type any food... e.g. paneer, sushi, quinoa" autocomplete="off">
+<span class="si">🔍</span>
+<div class="al" id="acL"></div>
+</div>
+<div class="qr">
+<div class="ig"><label>Quantity</label><input type="number" id="qInp" value="1" min="0.25" step="0.25"></div>
+<div class="ig"><label>Serving</label>
+<select id="sInp"><option value="0.5">½ serving</option><option value="1" selected>1 serving</option><option value="1.5">1½ servings</option><option value="2">2 servings</option><option value="3">3 servings</option></select>
+</div>
+</div>
+<button class="btn bp" id="addBtn">➕ Add to Log</button>
+<div class="mc">
+<h2 style="font-size:1rem">📊 Macro Breakdown</h2>
+<div class="mb"><div class="mh"><span class="mn">🥩 Protein</span><span class="mv" id="mPr">0g / 50g</span></div><div class="mt"><div class="mf pr" id="mPrF" style="width:0%"></div></div></div>
+<div class="mb"><div class="mh"><span class="mn">🍞 Carbs</span><span class="mv" id="mCr">0g / 250g</span></div><div class="mt"><div class="mf cr" id="mCrF" style="width:0%"></div></div></div>
+<div class="mb"><div class="mh"><span class="mn">🥑 Fat</span><span class="mv" id="mFt">0g / 65g</span></div><div class="mt"><div class="mf ft" id="mFtF" style="width:0%"></div></div></div>
+<div class="mb"><div class="mh"><span class="mn">🥬 Fiber</span><span class="mv" id="mFb">0g / 30g</span></div><div class="mt"><div class="mf fb" id="mFbF" style="width:0%"></div></div></div>
+</div>
+</div>
+</div>
+<div>
+<div class="cd" style="margin-bottom:20px">
+<h2>📋 Today's Food Log</h2>
+<div class="fl" id="fLog"><div class="em"><div class="ei">🍽️</div><p>No food logged yet.<br>Search any food to start!</p></div></div>
+<button class="btn bc" id="clrBtn">🗑️ Clear All</button>
+</div>
+<div class="cd ss">
+<h2>💡 Smart Suggestions</h2>
+<div id="sugB"><div class="sg tp"><h4>👋 Welcome!</h4><p>Start logging food to get personalized nutrition suggestions, healthy swaps, and diet insights.</p></div></div>
+</div>
+</div>
+</div>
+<footer>
+<p>🔥 <strong>CalorieWise</strong> — Free Smart Calorie & Nutrition Tracker</p>
+<p>500+ built-in foods + USDA FoodData Central API (300,000+ foods)</p>
+<p>Calorie values are approximate per standard serving. For medical advice, consult a professional.</p>
+</footer>
+</div>
+
+<script>
+// ===== FOOD DATABASE 500+ =====
+const DB=[
+{n:"Roti / Chapati",cal:120,p:3,c:20,f:3.5,fb:2,cat:"grain"},{n:"Paratha (Plain)",cal:220,p:5,c:30,f:10,fb:2,cat:"grain"},
+{n:"Aloo Paratha",cal:300,p:6,c:40,f:13,fb:3,cat:"grain"},{n:"Gobi Paratha",cal:260,p:5,c:35,f:11,fb:3,cat:"grain"},
+{n:"Paneer Paratha",cal:310,p:10,c:34,f:15,fb:2,cat:"grain"},{n:"Methi Paratha",cal:230,p:5,c:30,f:10,fb:3,cat:"grain"},
+{n:"Naan",cal:260,p:8,c:45,f:5,fb:2,cat:"grain"},{n:"Garlic Naan",cal:300,p:8,c:48,f:8,fb:2,cat:"grain"},
+{n:"Butter Naan",cal:320,p:8,c:46,f:12,fb:2,cat:"grain"},{n:"Kulcha",cal:280,p:7,c:42,f:9,fb:2,cat:"grain"},
+{n:"Puri",cal:150,p:3,c:18,f:8,fb:1,cat:"grain"},{n:"Bhatura",cal:300,p:6,c:40,f:14,fb:1,cat:"grain"},
+{n:"Rumali Roti",cal:90,p:3,c:16,f:1.5,fb:1,cat:"grain"},{n:"Bajra Roti",cal:110,p:3,c:20,f:2,fb:3,cat:"grain"},
+{n:"Jowar Roti",cal:105,p:3,c:22,f:1,fb:3,cat:"grain"},{n:"Makki Ki Roti",cal:130,p:3,c:24,f:2,fb:2,cat:"grain"},
+{n:"Rice (White, 1 cup cooked)",cal:206,p:4,c:45,f:0.5,fb:1,cat:"grain"},{n:"Brown Rice (1 cup cooked)",cal:215,p:5,c:45,f:2,fb:4,cat:"grain"},
+{n:"Jeera Rice",cal:250,p:5,c:48,f:5,fb:1,cat:"grain"},{n:"Biryani (Chicken)",cal:400,p:22,c:50,f:12,fb:2,cat:"meal"},
+{n:"Biryani (Mutton)",cal:450,p:24,c:48,f:18,fb:2,cat:"meal"},{n:"Biryani (Veg)",cal:320,p:8,c:52,f:9,fb:3,cat:"meal"},
+{n:"Biryani (Egg)",cal:370,p:16,c:50,f:12,fb:2,cat:"meal"},{n:"Pulao (Veg)",cal:250,p:5,c:42,f:7,fb:2,cat:"grain"},
+{n:"Lemon Rice",cal:220,p:4,c:40,f:5,fb:1,cat:"grain"},{n:"Curd Rice",cal:200,p:6,c:35,f:4,fb:1,cat:"grain"},
+{n:"Khichdi",cal:200,p:7,c:34,f:4,fb:3,cat:"grain"},
+{n:"Dal Tadka (1 bowl)",cal:180,p:10,c:25,f:5,fb:6,cat:"lentil"},{n:"Dal Makhani (1 bowl)",cal:260,p:12,c:30,f:10,fb:5,cat:"lentil"},
+{n:"Dal Fry",cal:170,p:10,c:22,f:5,fb:5,cat:"lentil"},{n:"Moong Dal",cal:150,p:10,c:22,f:2,fb:5,cat:"lentil"},
+{n:"Toor Dal / Arhar Dal",cal:160,p:10,c:24,f:3,fb:5,cat:"lentil"},{n:"Masoor Dal",cal:155,p:10,c:22,f:2,fb:4,cat:"lentil"},
+{n:"Urad Dal",cal:170,p:12,c:22,f:3,fb:5,cat:"lentil"},{n:"Chana Dal",cal:180,p:11,c:28,f:3,fb:6,cat:"lentil"},
+{n:"Rajma (1 bowl)",cal:210,p:12,c:32,f:3,fb:8,cat:"lentil"},{n:"Chole / Chana Masala",cal:240,p:10,c:35,f:7,fb:7,cat:"lentil"},
+{n:"Kadhi Pakora",cal:200,p:6,c:18,f:12,fb:2,cat:"lentil"},{n:"Sambar (1 bowl)",cal:140,p:7,c:20,f:4,fb:4,cat:"lentil"},
+{n:"Rasam (1 bowl)",cal:50,p:2,c:8,f:1,fb:1,cat:"lentil"},{n:"Sprouts Curry",cal:150,p:9,c:18,f:5,fb:5,cat:"lentil"},
+{n:"Paneer Butter Masala",cal:350,p:14,c:15,f:27,fb:2,cat:"curry"},{n:"Palak Paneer",cal:280,p:14,c:10,f:20,fb:3,cat:"curry"},
+{n:"Shahi Paneer",cal:340,p:14,c:14,f:26,fb:2,cat:"curry"},{n:"Kadai Paneer",cal:300,p:14,c:12,f:22,fb:2,cat:"curry"},
+{n:"Paneer Tikka Masala",cal:320,p:15,c:14,f:24,fb:2,cat:"curry"},{n:"Matar Paneer",cal:280,p:13,c:18,f:18,fb:3,cat:"curry"},
+{n:"Aloo Gobi",cal:180,p:4,c:22,f:9,fb:4,cat:"curry"},{n:"Aloo Matar",cal:190,p:5,c:24,f:8,fb:4,cat:"curry"},
+{n:"Aloo Jeera",cal:170,p:3,c:22,f:8,fb:3,cat:"curry"},{n:"Bhindi Masala",cal:150,p:3,c:12,f:10,fb:4,cat:"curry"},
+{n:"Baingan Bharta",cal:160,p:3,c:14,f:11,fb:4,cat:"curry"},{n:"Lauki / Bottle Gourd Curry",cal:80,p:2,c:10,f:4,fb:2,cat:"curry"},
+{n:"Tinda Masala",cal:90,p:2,c:10,f:5,fb:3,cat:"curry"},{n:"Karela / Bitter Gourd Fry",cal:100,p:2,c:8,f:7,fb:3,cat:"curry"},
+{n:"Mixed Veg Curry",cal:150,p:4,c:16,f:8,fb:4,cat:"curry"},{n:"Mushroom Masala",cal:160,p:5,c:12,f:10,fb:3,cat:"curry"},
+{n:"Malai Kofta",cal:350,p:10,c:22,f:25,fb:2,cat:"curry"},{n:"Dum Aloo",cal:250,p:5,c:28,f:14,fb:3,cat:"curry"},
+{n:"Chicken Curry",cal:300,p:25,c:10,f:18,fb:2,cat:"curry"},{n:"Butter Chicken",cal:370,p:26,c:12,f:24,fb:1,cat:"curry"},
+{n:"Chicken Tikka Masala",cal:350,p:28,c:12,f:22,fb:1,cat:"curry"},{n:"Chicken Korma",cal:360,p:24,c:14,f:24,fb:1,cat:"curry"},
+{n:"Kadai Chicken",cal:310,p:26,c:8,f:20,fb:2,cat:"curry"},{n:"Chicken Saag",cal:280,p:25,c:8,f:17,fb:2,cat:"curry"},
+{n:"Mutton Curry",cal:350,p:28,c:8,f:24,fb:1,cat:"curry"},{n:"Mutton Rogan Josh",cal:340,p:28,c:6,f:22,fb:1,cat:"curry"},
+{n:"Keema Matar",cal:300,p:22,c:12,f:20,fb:3,cat:"curry"},{n:"Fish Curry",cal:250,p:22,c:8,f:14,fb:1,cat:"curry"},
+{n:"Prawn / Shrimp Curry",cal:220,p:20,c:8,f:12,fb:1,cat:"curry"},{n:"Egg Curry (2 eggs)",cal:280,p:18,c:10,f:18,fb:1,cat:"curry"},
+{n:"Egg Bhurji",cal:220,p:14,c:4,f:16,fb:1,cat:"curry"},
+{n:"Plain Dosa",cal:170,p:4,c:30,f:4,fb:1,cat:"grain"},{n:"Masala Dosa",cal:280,p:6,c:42,f:10,fb:3,cat:"meal"},
+{n:"Rava Dosa",cal:200,p:4,c:28,f:8,fb:1,cat:"grain"},{n:"Mysore Masala Dosa",cal:320,p:7,c:44,f:13,fb:3,cat:"meal"},
+{n:"Uttapam",cal:200,p:5,c:30,f:6,fb:2,cat:"grain"},{n:"Idli (2 pcs)",cal:130,p:4,c:26,f:1,fb:1,cat:"grain"},
+{n:"Medu Vada (2 pcs)",cal:280,p:8,c:28,f:15,fb:3,cat:"snack"},{n:"Upma (1 bowl)",cal:200,p:5,c:32,f:6,fb:2,cat:"grain"},
+{n:"Pongal (1 bowl)",cal:250,p:7,c:38,f:7,fb:2,cat:"grain"},{n:"Appam (2 pcs)",cal:180,p:3,c:32,f:4,fb:1,cat:"grain"},
+{n:"Puttu",cal:220,p:4,c:40,f:5,fb:2,cat:"grain"},{n:"Pesarattu",cal:160,p:8,c:22,f:4,fb:3,cat:"grain"},
+{n:"Coconut Chutney",cal:80,p:1,c:5,f:6,fb:1,cat:"condiment"},{n:"Tomato Chutney",cal:50,p:1,c:6,f:3,fb:1,cat:"condiment"},
+{n:"Samosa (1 pc)",cal:250,p:4,c:28,f:14,fb:2,cat:"snack"},{n:"Pakora / Bhajia (5 pcs)",cal:200,p:4,c:20,f:12,fb:2,cat:"snack"},
+{n:"Vada Pav",cal:290,p:6,c:40,f:12,fb:3,cat:"snack"},{n:"Pav Bhaji",cal:400,p:10,c:55,f:16,fb:5,cat:"meal"},
+{n:"Misal Pav",cal:400,p:14,c:50,f:15,fb:7,cat:"meal"},{n:"Bhel Puri",cal:200,p:5,c:30,f:7,fb:3,cat:"snack"},
+{n:"Sev Puri (4 pcs)",cal:220,p:4,c:28,f:11,fb:2,cat:"snack"},{n:"Pani Puri (6 pcs)",cal:180,p:3,c:28,f:6,fb:2,cat:"snack"},
+{n:"Dahi Puri (4 pcs)",cal:200,p:5,c:26,f:8,fb:2,cat:"snack"},{n:"Ragda Pattice",cal:280,p:7,c:38,f:11,fb:4,cat:"snack"},
+{n:"Kachori (1 pc)",cal:250,p:5,c:28,f:14,fb:2,cat:"snack"},{n:"Aloo Tikki",cal:200,p:4,c:26,f:10,fb:3,cat:"snack"},
+{n:"Dhokla (3 pcs)",cal:160,p:5,c:28,f:3,fb:1,cat:"snack"},{n:"Khandvi (6 pcs)",cal:140,p:5,c:18,f:5,fb:1,cat:"snack"},
+{n:"Thepla (2 pcs)",cal:240,p:6,c:32,f:10,fb:3,cat:"grain"},{n:"Sabudana Khichdi",cal:280,p:4,c:48,f:9,fb:1,cat:"grain"},
+{n:"Poha (1 bowl)",cal:180,p:4,c:32,f:5,fb:2,cat:"grain"},{n:"Aloo Poha",cal:210,p:4,c:36,f:6,fb:2,cat:"grain"},
+{n:"Maggi Noodles (1 pack)",cal:310,p:7,c:42,f:13,fb:2,cat:"snack"},{n:"Bread Pakora (1 pc)",cal:200,p:4,c:22,f:11,fb:1,cat:"snack"},
+{n:"Spring Roll (2 pcs)",cal:220,p:5,c:26,f:11,fb:2,cat:"snack"},{n:"Momos Veg (6 pcs)",cal:200,p:6,c:30,f:6,fb:2,cat:"snack"},
+{n:"Momos Chicken (6 pcs)",cal:250,p:14,c:28,f:8,fb:2,cat:"snack"},{n:"Frankie / Wrap (Veg)",cal:300,p:8,c:38,f:13,fb:3,cat:"meal"},
+{n:"Frankie / Wrap (Chicken)",cal:350,p:18,c:36,f:14,fb:2,cat:"meal"},
+{n:"Gulab Jamun (2 pcs)",cal:300,p:4,c:45,f:12,fb:0,cat:"dessert"},{n:"Rasgulla (2 pcs)",cal:220,p:4,c:40,f:5,fb:0,cat:"dessert"},
+{n:"Jalebi (3 pcs)",cal:350,p:2,c:55,f:14,fb:0,cat:"dessert"},{n:"Kheer / Payasam (1 bowl)",cal:250,p:6,c:40,f:8,fb:0,cat:"dessert"},
+{n:"Gajar Ka Halwa (1 bowl)",cal:300,p:5,c:38,f:15,fb:2,cat:"dessert"},{n:"Moong Dal Halwa",cal:350,p:6,c:40,f:18,fb:1,cat:"dessert"},
+{n:"Ladoo - Besan (1 pc)",cal:180,p:3,c:22,f:9,fb:1,cat:"dessert"},{n:"Ladoo - Motichoor (1 pc)",cal:160,p:2,c:24,f:7,fb:0,cat:"dessert"},
+{n:"Barfi / Burfi (1 pc)",cal:150,p:3,c:20,f:7,fb:0,cat:"dessert"},{n:"Kaju Katli (2 pcs)",cal:200,p:4,c:22,f:11,fb:0,cat:"dessert"},
+{n:"Ras Malai (2 pcs)",cal:280,p:8,c:35,f:12,fb:0,cat:"dessert"},{n:"Kulfi (1 stick)",cal:200,p:5,c:25,f:9,fb:0,cat:"dessert"},
+{n:"Shrikhand (1 bowl)",cal:250,p:6,c:38,f:8,fb:0,cat:"dessert"},{n:"Malpua (2 pcs)",cal:300,p:4,c:40,f:14,fb:0,cat:"dessert"},
+{n:"Fried Rice (Veg)",cal:320,p:7,c:48,f:11,fb:2,cat:"meal"},{n:"Fried Rice (Chicken)",cal:380,p:16,c:48,f:13,fb:2,cat:"meal"},
+{n:"Fried Rice (Egg)",cal:350,p:12,c:48,f:12,fb:2,cat:"meal"},{n:"Hakka Noodles (Veg)",cal:300,p:7,c:44,f:11,fb:2,cat:"meal"},
+{n:"Hakka Noodles (Chicken)",cal:370,p:16,c:44,f:14,fb:2,cat:"meal"},{n:"Chow Mein",cal:350,p:10,c:48,f:13,fb:2,cat:"meal"},
+{n:"Manchurian (Veg) Dry",cal:250,p:5,c:28,f:13,fb:2,cat:"snack"},{n:"Manchurian Gravy",cal:280,p:5,c:32,f:14,fb:2,cat:"curry"},
+{n:"Chicken Manchurian",cal:300,p:18,c:22,f:15,fb:1,cat:"curry"},{n:"Sweet & Sour Chicken",cal:320,p:20,c:28,f:14,fb:1,cat:"curry"},
+{n:"Kung Pao Chicken",cal:300,p:22,c:18,f:16,fb:2,cat:"curry"},{n:"Dim Sum (4 pcs)",cal:200,p:8,c:24,f:8,fb:1,cat:"snack"},
+{n:"Hot & Sour Soup",cal:90,p:4,c:10,f:3,fb:1,cat:"soup"},{n:"Manchow Soup",cal:100,p:3,c:12,f:4,fb:1,cat:"soup"},
+{n:"Sweet Corn Soup",cal:80,p:2,c:14,f:2,fb:1,cat:"soup"},{n:"Wonton Soup",cal:120,p:6,c:14,f:4,fb:1,cat:"soup"},
+{n:"Chilli Chicken",cal:320,p:22,c:16,f:18,fb:2,cat:"snack"},{n:"Chilli Paneer",cal:280,p:12,c:18,f:18,fb:2,cat:"snack"},
+{n:"Crispy Honey Chilli Potato",cal:350,p:3,c:48,f:16,fb:2,cat:"snack"},{n:"Peking Duck (1 serving)",cal:340,p:20,c:15,f:22,fb:1,cat:"meal"},
+{n:"Mapo Tofu",cal:180,p:12,c:8,f:12,fb:1,cat:"curry"},{n:"Congee / Rice Porridge",cal:120,p:3,c:24,f:1,fb:0,cat:"grain"},
+{n:"Sushi Roll (6 pcs)",cal:250,p:9,c:38,f:6,fb:1,cat:"meal"},{n:"Sashimi (5 slices)",cal:130,p:20,c:0,f:5,fb:0,cat:"protein"},
+{n:"Ramen (1 bowl)",cal:450,p:18,c:55,f:16,fb:2,cat:"meal"},{n:"Miso Soup",cal:40,p:3,c:4,f:1,fb:1,cat:"soup"},
+{n:"Tempura Veg (5 pcs)",cal:250,p:4,c:28,f:14,fb:2,cat:"snack"},{n:"Tempura Shrimp (5 pcs)",cal:300,p:14,c:26,f:16,fb:1,cat:"snack"},
+{n:"Teriyaki Chicken",cal:300,p:28,c:14,f:14,fb:0,cat:"protein"},{n:"Edamame (1 cup)",cal:120,p:12,c:9,f:5,fb:4,cat:"healthy"},
+{n:"Gyoza / Dumplings (6 pcs)",cal:250,p:10,c:28,f:10,fb:1,cat:"snack"},{n:"Udon Noodle Soup",cal:350,p:12,c:52,f:8,fb:2,cat:"meal"},
+{n:"Onigiri (1 rice ball)",cal:180,p:4,c:38,f:1,fb:0,cat:"grain"},{n:"Katsu Curry",cal:500,p:22,c:55,f:20,fb:2,cat:"meal"},
+{n:"Bibimbap",cal:450,p:18,c:60,f:14,fb:4,cat:"meal"},{n:"Kimchi (1 cup)",cal:25,p:2,c:4,f:0.5,fb:2,cat:"healthy"},
+{n:"Korean Fried Chicken (5 pcs)",cal:400,p:25,c:22,f:24,fb:1,cat:"snack"},{n:"Japchae (Glass Noodles)",cal:300,p:6,c:50,f:8,fb:2,cat:"meal"},
+{n:"Tteokbokki (Rice Cakes)",cal:350,p:7,c:60,f:8,fb:2,cat:"snack"},{n:"Bulgogi (1 serving)",cal:320,p:28,c:12,f:18,fb:1,cat:"protein"},
+{n:"Kimchi Fried Rice",cal:380,p:10,c:52,f:14,fb:2,cat:"meal"},
+{n:"Pad Thai",cal:400,p:14,c:52,f:16,fb:2,cat:"meal"},{n:"Green Curry (1 bowl)",cal:280,p:16,c:12,f:20,fb:2,cat:"curry"},
+{n:"Red Curry (1 bowl)",cal:300,p:16,c:14,f:20,fb:2,cat:"curry"},{n:"Tom Yum Soup",cal:100,p:8,c:6,f:4,fb:1,cat:"soup"},
+{n:"Thai Fried Rice",cal:370,p:12,c:50,f:14,fb:2,cat:"meal"},{n:"Mango Sticky Rice",cal:350,p:4,c:60,f:10,fb:1,cat:"dessert"},
+{n:"Som Tam (Papaya Salad)",cal:120,p:3,c:18,f:4,fb:3,cat:"healthy"},
+{n:"Spaghetti Bolognese",cal:420,p:20,c:52,f:14,fb:3,cat:"meal"},{n:"Pasta Alfredo",cal:450,p:14,c:48,f:22,fb:2,cat:"meal"},
+{n:"Pasta Arrabiata",cal:350,p:10,c:52,f:10,fb:3,cat:"meal"},{n:"Penne Pasta (Plain)",cal:300,p:10,c:52,f:4,fb:3,cat:"meal"},
+{n:"Lasagna (1 serving)",cal:450,p:22,c:38,f:22,fb:2,cat:"meal"},{n:"Margherita Pizza (1 slice)",cal:250,p:10,c:32,f:9,fb:2,cat:"meal"},
+{n:"Pepperoni Pizza (1 slice)",cal:300,p:13,c:32,f:13,fb:2,cat:"meal"},{n:"Pizza (Veggie, 1 slice)",cal:240,p:9,c:32,f:8,fb:3,cat:"meal"},
+{n:"Bruschetta (2 pcs)",cal:180,p:4,c:22,f:8,fb:2,cat:"snack"},{n:"Risotto",cal:350,p:8,c:48,f:12,fb:1,cat:"meal"},
+{n:"Tiramisu (1 slice)",cal:350,p:6,c:38,f:20,fb:0,cat:"dessert"},{n:"Minestrone Soup",cal:120,p:5,c:18,f:3,fb:4,cat:"soup"},
+{n:"Burrito (Chicken)",cal:450,p:22,c:50,f:16,fb:4,cat:"meal"},{n:"Burrito (Bean & Cheese)",cal:400,p:15,c:52,f:14,fb:6,cat:"meal"},
+{n:"Taco (Chicken, 2 pcs)",cal:340,p:20,c:30,f:14,fb:3,cat:"meal"},{n:"Taco (Veg, 2 pcs)",cal:280,p:8,c:34,f:12,fb:4,cat:"meal"},
+{n:"Quesadilla (Cheese)",cal:350,p:14,c:30,f:18,fb:2,cat:"meal"},{n:"Nachos with Cheese",cal:400,p:10,c:42,f:22,fb:3,cat:"snack"},
+{n:"Guacamole (1/2 cup)",cal:120,p:2,c:8,f:10,fb:5,cat:"healthy"},{n:"Enchilada (2 pcs)",cal:400,p:16,c:38,f:20,fb:3,cat:"meal"},
+{n:"Hummus (1/2 cup)",cal:180,p:8,c:18,f:9,fb:4,cat:"healthy"},{n:"Falafel (4 pcs)",cal:250,p:10,c:28,f:12,fb:4,cat:"snack"},
+{n:"Shawarma (Chicken)",cal:400,p:25,c:35,f:16,fb:2,cat:"meal"},{n:"Shawarma (Veg)",cal:320,p:8,c:38,f:14,fb:3,cat:"meal"},
+{n:"Kebab (Seekh, 2 pcs)",cal:250,p:20,c:6,f:16,fb:1,cat:"protein"},{n:"Tabbouleh Salad",cal:120,p:3,c:16,f:6,fb:3,cat:"healthy"},
+{n:"Pita Bread (1 pc)",cal:170,p:6,c:33,f:1,fb:1,cat:"grain"},{n:"Baba Ganoush",cal:130,p:3,c:10,f:9,fb:4,cat:"healthy"},
+{n:"Fattoush Salad",cal:110,p:3,c:14,f:5,fb:3,cat:"healthy"},{n:"Kibbeh (2 pcs)",cal:280,p:14,c:22,f:16,fb:2,cat:"snack"},
+{n:"Burger (Chicken)",cal:450,p:25,c:40,f:20,fb:2,cat:"meal"},{n:"Burger (Beef)",cal:500,p:28,c:40,f:24,fb:2,cat:"meal"},
+{n:"Burger (Veg / Bean)",cal:380,p:12,c:45,f:16,fb:4,cat:"meal"},{n:"Hot Dog (1)",cal:300,p:11,c:26,f:17,fb:1,cat:"meal"},
+{n:"French Fries (medium)",cal:365,p:4,c:48,f:17,fb:4,cat:"snack"},{n:"Onion Rings (6 pcs)",cal:280,p:4,c:30,f:16,fb:2,cat:"snack"},
+{n:"Chicken Nuggets (6 pcs)",cal:280,p:14,c:18,f:17,fb:1,cat:"snack"},{n:"Grilled Cheese Sandwich",cal:350,p:14,c:30,f:20,fb:1,cat:"meal"},
+{n:"BLT Sandwich",cal:320,p:12,c:28,f:18,fb:2,cat:"meal"},{n:"Club Sandwich",cal:400,p:22,c:34,f:20,fb:2,cat:"meal"},
+{n:"Tuna Sandwich",cal:320,p:22,c:35,f:10,fb:2,cat:"meal"},{n:"Mac & Cheese (1 cup)",cal:350,p:14,c:38,f:16,fb:1,cat:"meal"},
+{n:"Mashed Potatoes (1 cup)",cal:210,p:4,c:35,f:7,fb:3,cat:"grain"},{n:"Coleslaw (1 cup)",cal:150,p:1,c:14,f:10,fb:2,cat:"healthy"},
+{n:"BBQ Ribs (4 pcs)",cal:500,p:30,c:15,f:35,fb:0,cat:"protein"},{n:"Steak (Grilled, 200g)",cal:450,p:50,c:0,f:26,fb:0,cat:"protein"},
+{n:"Fried Chicken (1 leg)",cal:280,p:20,c:10,f:18,fb:0,cat:"protein"},{n:"Fried Chicken (1 breast)",cal:360,p:32,c:12,f:20,fb:0,cat:"protein"},
+{n:"Pancakes (3 pcs)",cal:350,p:8,c:50,f:14,fb:1,cat:"grain"},{n:"Waffles (2 pcs)",cal:380,p:8,c:48,f:18,fb:1,cat:"grain"},
+{n:"Bagel with Cream Cheese",cal:350,p:10,c:48,f:14,fb:2,cat:"grain"},{n:"Toast with Butter (2 slices)",cal:220,p:5,c:26,f:10,fb:2,cat:"grain"},
+{n:"Cereal with Milk (1 bowl)",cal:250,p:8,c:40,f:6,fb:3,cat:"grain"},{n:"Granola (1 cup)",cal:400,p:10,c:60,f:14,fb:5,cat:"grain"},
+{n:"Oatmeal / Porridge (1 bowl)",cal:160,p:6,c:28,f:3,fb:4,cat:"grain"},{n:"Muesli with Milk",cal:250,p:8,c:40,f:6,fb:4,cat:"grain"},
+{n:"Cornflakes with Milk",cal:220,p:6,c:40,f:3,fb:1,cat:"grain"},
+{n:"Boiled Egg (1)",cal:78,p:6,c:1,f:5,fb:0,cat:"protein"},{n:"Scrambled Eggs (2)",cal:200,p:14,c:2,f:15,fb:0,cat:"protein"},
+{n:"Omelette (2 eggs)",cal:190,p:13,c:2,f:14,fb:0,cat:"protein"},{n:"Poached Egg (1)",cal:72,p:6,c:0,f:5,fb:0,cat:"protein"},
+{n:"Grilled Chicken Breast (150g)",cal:165,p:31,c:0,f:4,fb:0,cat:"protein"},{n:"Chicken Tikka (6 pcs)",cal:260,p:30,c:5,f:13,fb:1,cat:"protein"},
+{n:"Tandoori Chicken (1 leg)",cal:220,p:26,c:3,f:12,fb:0,cat:"protein"},{n:"Grilled Fish Fillet",cal:200,p:26,c:0,f:10,fb:0,cat:"protein"},
+{n:"Salmon Fillet (150g)",cal:280,p:30,c:0,f:17,fb:0,cat:"protein"},{n:"Tuna (canned, 1 can)",cal:180,p:30,c:0,f:6,fb:0,cat:"protein"},
+{n:"Sardines (1 can)",cal:200,p:22,c:0,f:12,fb:0,cat:"protein"},{n:"Prawns / Shrimp (100g)",cal:100,p:20,c:1,f:1,fb:0,cat:"protein"},
+{n:"Turkey Breast (150g)",cal:160,p:30,c:0,f:4,fb:0,cat:"protein"},{n:"Lamb Chops (2 pcs)",cal:350,p:26,c:0,f:26,fb:0,cat:"protein"},
+{n:"Tofu (100g)",cal:80,p:8,c:2,f:5,fb:.5,cat:"protein"},{n:"Tempeh (100g)",cal:190,p:18,c:10,f:9,fb:5,cat:"protein"},
+{n:"Soya Chunks (1 cup cooked)",cal:170,p:26,c:12,f:1,fb:4,cat:"protein"},{n:"Whey Protein Scoop",cal:120,p:24,c:3,f:1,fb:0,cat:"protein"},
+{n:"Protein Shake",cal:200,p:25,c:15,f:5,fb:1,cat:"drink"},
+{n:"Potato (1 medium, boiled)",cal:130,p:3,c:30,f:.2,fb:3,cat:"veg"},{n:"Sweet Potato (1 medium)",cal:115,p:2,c:27,f:.1,fb:4,cat:"veg"},
+{n:"Tomato (1 medium)",cal:22,p:1,c:5,f:.2,fb:1,cat:"veg"},{n:"Onion (1 medium)",cal:44,p:1,c:10,f:.1,fb:2,cat:"veg"},
+{n:"Carrot (1 medium)",cal:25,p:1,c:6,f:.1,fb:2,cat:"veg"},{n:"Cucumber (1 cup sliced)",cal:16,p:1,c:3,f:.1,fb:1,cat:"veg"},
+{n:"Spinach (1 cup cooked)",cal:40,p:5,c:6,f:.5,fb:4,cat:"veg"},{n:"Broccoli (1 cup)",cal:55,p:4,c:11,f:.5,fb:5,cat:"veg"},
+{n:"Cauliflower (1 cup)",cal:25,p:2,c:5,f:.1,fb:2,cat:"veg"},{n:"Green Beans (1 cup)",cal:35,p:2,c:7,f:.2,fb:3,cat:"veg"},
+{n:"Peas (1 cup)",cal:120,p:8,c:21,f:.5,fb:7,cat:"veg"},{n:"Corn (1 cob)",cal:90,p:3,c:19,f:1,fb:2,cat:"veg"},
+{n:"Bell Pepper (1 medium)",cal:30,p:1,c:6,f:.3,fb:2,cat:"veg"},{n:"Mushrooms (1 cup)",cal:22,p:3,c:3,f:.3,fb:1,cat:"veg"},
+{n:"Cabbage (1 cup shredded)",cal:22,p:1,c:5,f:.1,fb:2,cat:"veg"},{n:"Eggplant / Brinjal (1 cup)",cal:35,p:1,c:9,f:.2,fb:3,cat:"veg"},
+{n:"Zucchini (1 cup)",cal:20,p:1,c:4,f:.2,fb:1,cat:"veg"},{n:"Beetroot (1 medium)",cal:44,p:2,c:10,f:.2,fb:2,cat:"veg"},
+{n:"Radish / Mooli (1 cup)",cal:18,p:1,c:4,f:.1,fb:2,cat:"veg"},{n:"Lettuce (1 cup)",cal:5,p:.5,c:1,f:.1,fb:1,cat:"veg"},
+{n:"Kale (1 cup)",cal:35,p:2,c:7,f:.5,fb:1,cat:"veg"},{n:"Asparagus (6 spears)",cal:20,p:2,c:4,f:.1,fb:2,cat:"veg"},
+{n:"Okra / Bhindi (1 cup)",cal:35,p:2,c:7,f:.2,fb:3,cat:"veg"},{n:"Bottle Gourd / Lauki (1 cup)",cal:15,p:1,c:3,f:.1,fb:1,cat:"veg"},
+{n:"Ridge Gourd / Turai (1 cup)",cal:20,p:1,c:4,f:.1,fb:1,cat:"veg"},{n:"Bitter Gourd / Karela (1 cup)",cal:20,p:1,c:4,f:.2,fb:2,cat:"veg"},
+{n:"Drumstick / Moringa (100g)",cal:37,p:2,c:8,f:.1,fb:2,cat:"veg"},{n:"Pumpkin (1 cup)",cal:30,p:1,c:7,f:.1,fb:1,cat:"veg"},
+{n:"Artichoke (1 medium)",cal:60,p:4,c:13,f:.2,fb:7,cat:"veg"},{n:"Brussels Sprouts (1 cup)",cal:56,p:4,c:11,f:.5,fb:4,cat:"veg"},
+{n:"Celery (3 stalks)",cal:10,p:.5,c:2,f:.1,fb:1,cat:"veg"},{n:"Avocado (half)",cal:120,p:2,c:6,f:11,fb:5,cat:"healthy"},
+{n:"Apple (1 medium)",cal:95,p:.5,c:25,f:.3,fb:4,cat:"fruit"},{n:"Banana (1 medium)",cal:105,p:1,c:27,f:.4,fb:3,cat:"fruit"},
+{n:"Orange (1 medium)",cal:62,p:1,c:15,f:.2,fb:3,cat:"fruit"},{n:"Mango (1 cup)",cal:100,p:1,c:25,f:.6,fb:3,cat:"fruit"},
+{n:"Watermelon (1 cup)",cal:46,p:1,c:12,f:.2,fb:1,cat:"fruit"},{n:"Grapes (1 cup)",cal:104,p:1,c:27,f:.2,fb:1,cat:"fruit"},
+{n:"Papaya (1 cup)",cal:55,p:1,c:14,f:.2,fb:2,cat:"fruit"},{n:"Pomegranate (1 medium)",cal:130,p:3,c:32,f:1,fb:6,cat:"fruit"},
+{n:"Pineapple (1 cup)",cal:82,p:1,c:22,f:.2,fb:2,cat:"fruit"},{n:"Strawberries (1 cup)",cal:50,p:1,c:12,f:.5,fb:3,cat:"fruit"},
+{n:"Blueberries (1 cup)",cal:85,p:1,c:21,f:.5,fb:4,cat:"fruit"},{n:"Kiwi (1 medium)",cal:42,p:1,c:10,f:.4,fb:2,cat:"fruit"},
+{n:"Peach (1 medium)",cal:60,p:1,c:14,f:.4,fb:2,cat:"fruit"},{n:"Pear (1 medium)",cal:100,p:1,c:26,f:.2,fb:5,cat:"fruit"},
+{n:"Plum (2 medium)",cal:60,p:1,c:15,f:.4,fb:2,cat:"fruit"},{n:"Cherries (1 cup)",cal:90,p:1,c:22,f:.3,fb:3,cat:"fruit"},
+{n:"Guava (1 medium)",cal:37,p:1,c:8,f:.5,fb:3,cat:"fruit"},{n:"Lychee (10 pcs)",cal:66,p:1,c:16,f:.4,fb:1,cat:"fruit"},
+{n:"Coconut Flesh (1/2 cup)",cal:180,p:2,c:8,f:17,fb:5,cat:"fruit"},{n:"Dates (3 pcs)",cal:200,p:2,c:54,f:.1,fb:5,cat:"fruit"},
+{n:"Figs / Anjeer (3 pcs)",cal:110,p:1,c:28,f:.3,fb:4,cat:"fruit"},{n:"Jackfruit (1 cup)",cal:95,p:2,c:24,f:.5,fb:2,cat:"fruit"},
+{n:"Sapota / Chikoo (1 medium)",cal:83,p:.5,c:20,f:1,fb:5,cat:"fruit"},{n:"Custard Apple / Sitaphal (1)",cal:136,p:2,c:34,f:.5,fb:4,cat:"fruit"},
+{n:"Dragon Fruit (1 medium)",cal:60,p:1,c:13,f:.4,fb:3,cat:"fruit"},{n:"Passion Fruit (2 pcs)",cal:34,p:1,c:8,f:.2,fb:4,cat:"fruit"},
+{n:"Cranberries (1 cup)",cal:46,p:.5,c:12,f:.1,fb:4,cat:"fruit"},{n:"Raspberries (1 cup)",cal:65,p:1,c:15,f:.8,fb:8,cat:"fruit"},
+{n:"Cantaloupe / Muskmelon (1 cup)",cal:54,p:1,c:13,f:.3,fb:1,cat:"fruit"},
+{n:"Chickpeas / Kabuli Chana (1 cup)",cal:270,p:15,c:45,f:4,fb:12,cat:"lentil"},{n:"Black Beans (1 cup)",cal:230,p:15,c:40,f:1,fb:15,cat:"lentil"},
+{n:"Kidney Beans / Rajma (1 cup)",cal:225,p:15,c:40,f:1,fb:11,cat:"lentil"},{n:"Lentils / Masoor (1 cup)",cal:230,p:18,c:40,f:1,fb:16,cat:"lentil"},
+{n:"Green Moong (1 cup)",cal:210,p:14,c:38,f:1,fb:15,cat:"lentil"},{n:"Black Eyed Peas / Lobia (1 cup)",cal:200,p:13,c:36,f:1,fb:11,cat:"lentil"},
+{n:"Soybeans (1 cup cooked)",cal:300,p:29,c:17,f:15,fb:10,cat:"lentil"},{n:"Lima Beans (1 cup)",cal:210,p:12,c:40,f:1,fb:9,cat:"lentil"},
+{n:"Navy Beans (1 cup)",cal:250,p:15,c:47,f:1,fb:19,cat:"lentil"},{n:"Pinto Beans (1 cup)",cal:245,p:15,c:45,f:1,fb:15,cat:"lentil"},
+{n:"Wheat Flour (1 cup)",cal:410,p:16,c:86,f:2,fb:12,cat:"grain"},{n:"Quinoa (1 cup cooked)",cal:222,p:8,c:39,f:4,fb:5,cat:"grain"},
+{n:"Couscous (1 cup cooked)",cal:176,p:6,c:36,f:.3,fb:2,cat:"grain"},{n:"Barley (1 cup cooked)",cal:193,p:4,c:44,f:1,fb:6,cat:"grain"},
+{n:"Millet / Bajra (1 cup cooked)",cal:207,p:6,c:41,f:2,fb:2,cat:"grain"},{n:"Ragi / Finger Millet (1 cup)",cal:328,p:7,c:72,f:1,fb:4,cat:"grain"},
+{n:"Amaranth (1 cup cooked)",cal:250,p:9,c:46,f:4,fb:5,cat:"grain"},{n:"Buckwheat (1 cup cooked)",cal:155,p:6,c:33,f:1,fb:5,cat:"grain"},
+{n:"Cornmeal / Polenta (1 cup)",cal:220,p:5,c:47,f:1,fb:4,cat:"grain"},{n:"Semolina / Rava / Suji (1 cup)",cal:360,p:12,c:72,f:1,fb:4,cat:"grain"},
+{n:"Milk - Full Fat (1 glass)",cal:150,p:8,c:12,f:8,fb:0,cat:"dairy"},{n:"Milk - Low Fat (1 glass)",cal:100,p:8,c:12,f:2.5,fb:0,cat:"dairy"},
+{n:"Milk - Skimmed (1 glass)",cal:80,p:8,c:12,f:.2,fb:0,cat:"dairy"},{n:"Curd / Yogurt (1 cup)",cal:100,p:8,c:12,f:3,fb:0,cat:"dairy"},
+{n:"Greek Yogurt (1 cup)",cal:130,p:15,c:10,f:4,fb:0,cat:"dairy"},{n:"Paneer / Cottage Cheese (100g)",cal:265,p:18,c:3,f:20,fb:0,cat:"dairy"},
+{n:"Cheese Slice (1)",cal:70,p:4,c:1,f:5,fb:0,cat:"dairy"},{n:"Cheddar Cheese (30g)",cal:120,p:7,c:.5,f:10,fb:0,cat:"dairy"},
+{n:"Mozzarella (30g)",cal:85,p:6,c:1,f:6,fb:0,cat:"dairy"},{n:"Cream Cheese (2 tbsp)",cal:100,p:2,c:1,f:10,fb:0,cat:"dairy"},
+{n:"Butter (1 tbsp)",cal:100,p:0,c:0,f:11,fb:0,cat:"dairy"},{n:"Ghee (1 tbsp)",cal:120,p:0,c:0,f:14,fb:0,cat:"dairy"},
+{n:"Raita (1 bowl)",cal:80,p:4,c:8,f:3,fb:1,cat:"dairy"},{n:"Almond Milk (1 cup)",cal:40,p:1,c:2,f:3,fb:1,cat:"dairy"},
+{n:"Oat Milk (1 cup)",cal:120,p:3,c:16,f:5,fb:2,cat:"dairy"},{n:"Soy Milk (1 cup)",cal:80,p:7,c:4,f:4,fb:1,cat:"dairy"},
+{n:"Almonds (10 pcs)",cal:70,p:3,c:2,f:6,fb:1,cat:"nuts"},{n:"Cashews (10 pcs)",cal:90,p:3,c:5,f:7,fb:.5,cat:"nuts"},
+{n:"Walnuts (5 halves)",cal:90,p:2,c:2,f:9,fb:1,cat:"nuts"},{n:"Pistachios (20 pcs)",cal:80,p:3,c:4,f:6,fb:1,cat:"nuts"},
+{n:"Peanuts (1 handful / 30g)",cal:160,p:7,c:5,f:14,fb:2,cat:"nuts"},{n:"Mixed Nuts (1 handful)",cal:170,p:5,c:7,f:15,fb:2,cat:"nuts"},
+{n:"Macadamia Nuts (10 pcs)",cal:100,p:1,c:2,f:10,fb:1,cat:"nuts"},{n:"Brazil Nuts (3 pcs)",cal:100,p:2,c:1,f:10,fb:1,cat:"nuts"},
+{n:"Hazelnuts (10 pcs)",cal:90,p:2,c:2,f:9,fb:1,cat:"nuts"},{n:"Pine Nuts (2 tbsp)",cal:110,p:2,c:2,f:11,fb:1,cat:"nuts"},
+{n:"Peanut Butter (2 tbsp)",cal:190,p:7,c:7,f:16,fb:2,cat:"nuts"},{n:"Almond Butter (2 tbsp)",cal:196,p:7,c:6,f:18,fb:3,cat:"nuts"},
+{n:"Chia Seeds (2 tbsp)",cal:120,p:4,c:12,f:7,fb:10,cat:"nuts"},{n:"Flax Seeds (2 tbsp)",cal:110,p:4,c:6,f:8,fb:6,cat:"nuts"},
+{n:"Sunflower Seeds (2 tbsp)",cal:100,p:3,c:4,f:9,fb:2,cat:"nuts"},{n:"Pumpkin Seeds (2 tbsp)",cal:90,p:4,c:2,f:7,fb:1,cat:"nuts"},
+{n:"Sesame Seeds / Til (2 tbsp)",cal:100,p:3,c:4,f:9,fb:2,cat:"nuts"},
+{n:"Chai / Tea (1 cup)",cal:50,p:1,c:8,f:1.5,fb:0,cat:"drink"},{n:"Black Tea",cal:2,p:0,c:0,f:0,fb:0,cat:"drink"},
+{n:"Green Tea",cal:2,p:0,c:0,f:0,fb:0,cat:"drink"},{n:"Black Coffee",cal:5,p:.3,c:0,f:0,fb:0,cat:"drink"},
+{n:"Coffee with Milk",cal:70,p:3,c:8,f:3,fb:0,cat:"drink"},{n:"Cappuccino",cal:120,p:6,c:12,f:5,fb:0,cat:"drink"},
+{n:"Latte",cal:150,p:8,c:15,f:6,fb:0,cat:"drink"},{n:"Espresso (1 shot)",cal:5,p:0,c:1,f:0,fb:0,cat:"drink"},
+{n:"Masala Chai",cal:70,p:2,c:10,f:2,fb:0,cat:"drink"},{n:"Lassi (Sweet)",cal:180,p:6,c:30,f:4,fb:0,cat:"drink"},
+{n:"Lassi (Salt)",cal:80,p:4,c:8,f:3,fb:0,cat:"drink"},{n:"Buttermilk / Chaas",cal:40,p:2,c:5,f:1,fb:0,cat:"drink"},
+{n:"Mango Shake",cal:220,p:5,c:40,f:5,fb:1,cat:"drink"},{n:"Banana Shake",cal:200,p:6,c:35,f:5,fb:2,cat:"drink"},
+{n:"Coconut Water",cal:45,p:2,c:9,f:.5,fb:0,cat:"drink"},{n:"Fresh Lime Water / Nimbu Pani",cal:30,p:0,c:8,f:0,fb:0,cat:"drink"},
+{n:"Sugarcane Juice",cal:180,p:0,c:45,f:0,fb:0,cat:"drink"},{n:"Orange Juice (1 glass)",cal:110,p:2,c:26,f:.5,fb:.5,cat:"drink"},
+{n:"Apple Juice (1 glass)",cal:120,p:.5,c:28,f:.3,fb:.5,cat:"drink"},{n:"Soft Drink / Cola (1 can)",cal:140,p:0,c:39,f:0,fb:0,cat:"drink"},
+{n:"Diet Soda (1 can)",cal:0,p:0,c:0,f:0,fb:0,cat:"drink"},{n:"Energy Drink (1 can)",cal:110,p:0,c:28,f:0,fb:0,cat:"drink"},
+{n:"Smoothie - Berry",cal:180,p:4,c:35,f:3,fb:4,cat:"drink"},{n:"Smoothie - Green",cal:150,p:4,c:28,f:3,fb:4,cat:"drink"},
+{n:"Biscuits / Cookies (4 pcs)",cal:180,p:2,c:26,f:8,fb:1,cat:"snack"},{n:"Chips / Crisps (small pack)",cal:160,p:2,c:15,f:10,fb:1,cat:"snack"},
+{n:"Popcorn (1 cup, air-popped)",cal:30,p:1,c:6,f:.4,fb:1,cat:"snack"},{n:"Popcorn (butter, 1 cup)",cal:80,p:1,c:8,f:5,fb:1,cat:"snack"},
+{n:"Dark Chocolate (30g)",cal:170,p:2,c:18,f:11,fb:2,cat:"snack"},{n:"Milk Chocolate (30g)",cal:160,p:2,c:18,f:9,fb:1,cat:"snack"},
+{n:"Granola Bar (1)",cal:190,p:4,c:28,f:7,fb:3,cat:"snack"},{n:"Energy Bar / Protein Bar",cal:220,p:12,c:26,f:8,fb:3,cat:"snack"},
+{n:"Trail Mix (1/4 cup)",cal:170,p:5,c:14,f:11,fb:2,cat:"nuts"},{n:"Rice Cake (1)",cal:35,p:1,c:7,f:.3,fb:0,cat:"snack"},
+{n:"Crackers (6 pcs)",cal:120,p:2,c:18,f:4,fb:1,cat:"snack"},{n:"Muffin (1 medium)",cal:350,p:5,c:48,f:15,fb:1,cat:"snack"},
+{n:"Donut (1)",cal:300,p:4,c:36,f:16,fb:1,cat:"dessert"},{n:"Croissant (1)",cal:270,p:5,c:28,f:15,fb:1,cat:"snack"},
+{n:"Brownie (1 pc)",cal:250,p:3,c:30,f:14,fb:1,cat:"dessert"},
+{n:"Ice Cream (1 scoop)",cal:140,p:2,c:16,f:7,fb:0,cat:"dessert"},{n:"Cheesecake (1 slice)",cal:400,p:7,c:32,f:28,fb:0,cat:"dessert"},
+{n:"Chocolate Cake (1 slice)",cal:350,p:4,c:44,f:18,fb:1,cat:"dessert"},{n:"Apple Pie (1 slice)",cal:300,p:3,c:40,f:14,fb:2,cat:"dessert"},
+{n:"Churros (3 pcs)",cal:250,p:3,c:30,f:14,fb:1,cat:"dessert"},
+{n:"Jollof Rice",cal:350,p:8,c:52,f:12,fb:2,cat:"meal"},{n:"Injera (1 pc)",cal:130,p:5,c:26,f:1,fb:2,cat:"grain"},
+{n:"Fufu (1 serving)",cal:270,p:2,c:60,f:1,fb:3,cat:"grain"},{n:"Egusi Soup",cal:250,p:10,c:8,f:20,fb:3,cat:"curry"},
+{n:"Tagine (Chicken)",cal:300,p:22,c:18,f:14,fb:3,cat:"meal"},
+{n:"Mixed Green Salad",cal:30,p:2,c:5,f:.5,fb:2,cat:"healthy"},{n:"Caesar Salad",cal:250,p:8,c:12,f:18,fb:2,cat:"healthy"},
+{n:"Greek Salad",cal:180,p:5,c:10,f:14,fb:3,cat:"healthy"},{n:"Fruit Salad (1 cup)",cal:80,p:1,c:20,f:.5,fb:3,cat:"healthy"},
+{n:"Sprouts (1 bowl)",cal:100,p:7,c:14,f:1,fb:4,cat:"healthy"},{n:"Quinoa Salad",cal:200,p:7,c:28,f:7,fb:4,cat:"healthy"},
+{n:"Acai Bowl",cal:300,p:5,c:50,f:8,fb:6,cat:"healthy"},{n:"Smoothie Bowl",cal:280,p:6,c:45,f:8,fb:5,cat:"healthy"},
+{n:"Ketchup (1 tbsp)",cal:20,p:0,c:5,f:0,fb:0,cat:"condiment"},{n:"Mayonnaise (1 tbsp)",cal:100,p:0,c:0,f:11,fb:0,cat:"condiment"},
+{n:"Olive Oil (1 tbsp)",cal:120,p:0,c:0,f:14,fb:0,cat:"condiment"},{n:"Honey (1 tbsp)",cal:64,p:0,c:17,f:0,fb:0,cat:"condiment"},
+{n:"Pickle / Achaar (1 tbsp)",cal:30,p:0,c:2,f:2,fb:0,cat:"condiment"},{n:"Jam (1 tbsp)",cal:50,p:0,c:13,f:0,fb:0,cat:"condiment"},
+{n:"Sugar (1 tsp)",cal:16,p:0,c:4,f:0,fb:0,cat:"condiment"},{n:"Ghee (1 tbsp)",cal:120,p:0,c:0,f:14,fb:0,cat:"condiment"},
+{n:"Jaggery / Gur (1 tbsp)",cal:40,p:0,c:10,f:0,fb:0,cat:"condiment"}
+];
+
+// ===== STATE =====
+let log=[],curMeal="Breakfast",selFood=null,uKey=localStorage.getItem('uKey')||'',sTO=null;
+
+// ===== INIT — All event listeners via JS (no inline onclick) =====
+document.addEventListener('DOMContentLoaded',function(){
+    updateApiDot();
+    render();
+
+    // API button
+    document.getElementById('apiBtn').addEventListener('click',function(e){
+        e.preventDefault();e.stopPropagation();
+        document.getElementById('modal').classList.add('vis');
+        document.getElementById('keyInp').value=uKey;
+    });
+
+    // Modal cancel
+    document.getElementById('cancelBtn').addEventListener('click',function(){
+        document.getElementById('modal').classList.remove('vis');
+    });
+
+    // Modal save
+    document.getElementById('saveBtn').addEventListener('click',function(){
+        uKey=document.getElementById('keyInp').value.trim();
+        if(uKey)localStorage.setItem('uKey',uKey);else localStorage.removeItem('uKey');
+        updateApiDot();
+        document.getElementById('modal').classList.remove('vis');
+    });
+
+    // Close modal on bg click
+    document.getElementById('modal').addEventListener('click',function(e){
+        if(e.target===this)this.classList.remove('vis');
+    });
+
+    // Meal tags
+    document.querySelectorAll('.ml').forEach(function(btn){
+        btn.addEventListener('click',function(){
+            document.querySelectorAll('.ml').forEach(function(b){b.classList.remove('act')});
+            this.classList.add('act');
+            curMeal=this.dataset.meal;
+        });
+    });
+
+    // Food search
+    var fInp=document.getElementById('fInp');
+    fInp.addEventListener('input',function(){onSearch(this.value)});
+    fInp.addEventListener('focus',function(){onSearch(this.value)});
+
+    // Close autocomplete
+    document.addEventListener('click',function(e){if(!e.target.closest('.ig'))hideAC()});
+
+    // Add food
+    document.getElementById('addBtn').addEventListener('click',addFood);
+
+    // Clear
+    document.getElementById('clrBtn').addEventListener('click',clearAll);
+
+    // Goal change
+    document.getElementById('gInp').addEventListener('change',render);
+});
+
+function updateApiDot(){
+    var d=document.getElementById('apiDot'),l=document.getElementById('apiLbl');
+    if(uKey){d.classList.add('on');l.textContent='USDA API Connected'}
+    else{d.classList.remove('on');l.textContent='Connect USDA API'}
+}
+
+// ===== SEARCH =====
+function onSearch(q){
+    clearTimeout(sTO);
+    if(!q||q.length<1){hideAC();return}
+    showLocal(q);
+    if(uKey&&q.length>=2)sTO=setTimeout(function(){searchAPI(q)},400);
+}
+function showLocal(q){
+    var ql=q.toLowerCase(),m=DB.filter(function(f){return f.n.toLowerCase().indexOf(ql)!==-1}).slice(0,10),list=document.getElementById('acL');
+    if(!m.length&&!uKey){list.innerHTML='<div class="ald">No matches. Connect USDA API for 300,000+ foods!</div>';list.classList.add('sh');return}
+    var h=m.map(function(f){var i=DB.indexOf(f);return '<div class="ai" data-idx="'+i+'"><span class="af">'+hl(f.n,q)+'</span><div class="am"><span class="ac">'+f.cal+' kcal</span><span class="as">LOCAL</span></div></div>'}).join('');
+    if(uKey&&q.length>=2)h+='<div class="ald" id="apiLd">🔍 Searching USDA database...</div>';
+    else if(!uKey)h+='<div class="ald" style="font-size:.75rem;color:#555">💡 Connect USDA API for 300,000+ more foods</div>';
+    list.innerHTML=h;list.classList.add('sh');
+    list.querySelectorAll('.ai[data-idx]').forEach(function(el){
+        el.addEventListener('click',function(){pickLocal(parseInt(this.dataset.idx))});
+    });
+}
+function hl(t,q){var i=t.toLowerCase().indexOf(q.toLowerCase());if(i===-1)return t;return t.slice(0,i)+'<strong style="color:var(--p)">'+t.slice(i,i+q.length)+'</strong>'+t.slice(i+q.length)}
+
+async function searchAPI(q){
+    try{
+        var r=await fetch('https://api.nal.usda.gov/fdc/v1/foods/search?api_key='+uKey+'&query='+encodeURIComponent(q)+'&pageSize=8&dataType=Survey%20(FHCDES),Foundation,SR%20Legacy');
+        var d=await r.json();var ld=document.getElementById('apiLd');
+        if(!d.foods||!d.foods.length){if(ld)ld.textContent='No USDA results.';return}
+        if(ld)ld.remove();
+        var list=document.getElementById('acL');
+        d.foods.forEach(function(food){
+            var nt={cal:0,p:0,c:0,f:0,fb:0};
+            (food.foodNutrients||[]).forEach(function(n){
+                if(n.nutrientId===1008)nt.cal=Math.round(n.value||0);
+                if(n.nutrientId===1003)nt.p=Math.round((n.value||0)*10)/10;
+                if(n.nutrientId===1005)nt.c=Math.round((n.value||0)*10)/10;
+                if(n.nutrientId===1004)nt.f=Math.round((n.value||0)*10)/10;
+                if(n.nutrientId===1079)nt.fb=Math.round((n.value||0)*10)/10;
+            });
+            var nm=food.description.length>55?food.description.slice(0,52)+'...':food.description;
+            var el=document.createElement('div');el.className='ai';
+            el.innerHTML='<span class="af">'+nm+'</span><div class="am"><span class="ac">'+nt.cal+' kcal</span><span class="as" style="background:rgba(46,213,115,.1);color:var(--ok)">USDA</span></div>';
+            el.addEventListener('click',function(){pickUSDA(food.description,nt)});
+            list.appendChild(el);
+        });
+    }catch(e){var ld=document.getElementById('apiLd');if(ld)ld.textContent='⚠️ API error. Check key.'}
+}
+function hideAC(){document.getElementById('acL').classList.remove('sh')}
+
+// ===== PICK FOOD =====
+function pickLocal(i){selFood={name:DB[i].n,cal:DB[i].cal,p:DB[i].p,c:DB[i].c,f:DB[i].f,fb:DB[i].fb,cat:DB[i].cat};document.getElementById('fInp').value=DB[i].n;hideAC()}
+function pickUSDA(nm,nt){selFood={name:nm,cal:nt.cal,p:nt.p,c:nt.c,f:nt.f,fb:nt.fb,cat:'api'};document.getElementById('fInp').value=nm;hideAC()}
+
+// ===== ADD / DELETE =====
+function addFood(){
+    if(!selFood){var q=document.getElementById('fInp').value.trim().toLowerCase();var m=DB.find(function(f){return f.n.toLowerCase().indexOf(q)!==-1});
+    if(m)selFood={name:m.n,cal:m.cal,p:m.p,c:m.c,f:m.f,fb:m.fb,cat:m.cat};else{alert('Please select a food from the suggestions!');return}}
+    var qt=parseFloat(document.getElementById('qInp').value)||1,sv=parseFloat(document.getElementById('sInp').value)||1,ml=qt*sv;
+    log.push({id:Date.now(),name:selFood.name,meal:curMeal,qty:qt,srv:sv,cal:Math.round(selFood.cal*ml),p:Math.round(selFood.p*ml*10)/10,c:Math.round(selFood.c*ml*10)/10,f:Math.round(selFood.f*ml*10)/10,fb:Math.round(selFood.fb*ml*10)/10,cat:selFood.cat});
+    selFood=null;document.getElementById('fInp').value='';document.getElementById('qInp').value=1;document.getElementById('sInp').value='1';render();
+}
+function delFood(id){log=log.filter(function(f){return f.id!==id});render()}
+function clearAll(){if(log.length&&confirm('Clear all food?')){log=[];render()}}
+
+// ===== RENDER =====
+function render(){
+    var t=log.reduce(function(a,f){return{cal:a.cal+f.cal,p:a.p+f.p,c:a.c+f.c,f:a.f+f.f,fb:a.fb+f.fb}},{cal:0,p:0,c:0,f:0,fb:0});
+    var goal=parseInt(document.getElementById('gInp').value)||2000;
+    document.getElementById('sCal').textContent=t.cal;
+    document.getElementById('sPro').textContent=Math.round(t.p)+'g';
+    document.getElementById('sCrb').textContent=Math.round(t.c)+'g';
+    document.getElementById('sFat').textContent=Math.round(t.f)+'g';
+    document.getElementById('sFib').textContent=Math.round(t.fb)+'g';
+    var pct=Math.min(t.cal/goal*100,100),pf=document.getElementById('pFl');
+    pf.style.width=pct+'%';pf.className='pf'+(pct>90?' ov':pct>70?' w':'');
+    document.getElementById('pTx').textContent=t.cal+' / '+goal+' kcal';
+    var pg=50,cg=250,fg=65,fbg=30;
+    document.getElementById('mPr').textContent=Math.round(t.p)+'g / '+pg+'g';document.getElementById('mPrF').style.width=Math.min(t.p/pg*100,100)+'%';
+    document.getElementById('mCr').textContent=Math.round(t.c)+'g / '+cg+'g';document.getElementById('mCrF').style.width=Math.min(t.c/cg*100,100)+'%';
+    document.getElementById('mFt').textContent=Math.round(t.f)+'g / '+fg+'g';document.getElementById('mFtF').style.width=Math.min(t.f/fg*100,100)+'%';
+    document.getElementById('mFb').textContent=Math.round(t.fb)+'g / '+fbg+'g';document.getElementById('mFbF').style.width=Math.min(t.fb/fbg*100,100)+'%';
+    var fl=document.getElementById('fLog');
+    if(!log.length){fl.innerHTML='<div class="em"><div class="ei">🍽️</div><p>No food logged yet.<br>Search any food to start!</p></div>';
+    }else{var h='';['Breakfast','Lunch','Dinner','Snack'].forEach(function(m){
+        var items=log.filter(function(f){return f.meal===m});if(items.length){
+        h+='<div class="mlb">'+m+'</div>';items.forEach(function(f){
+        h+='<div class="fi"><div class="fi-i"><div class="fn">'+f.name+'</div><div class="fd">'+f.qty+' × '+f.srv+' srv | P:'+f.p+'g C:'+f.c+'g F:'+f.f+'g</div></div><div class="fc">'+f.cal+'</div><button class="db" data-id="'+f.id+'">✕</button></div>'})
+        }});fl.innerHTML=h;
+        fl.querySelectorAll('.db').forEach(function(b){b.addEventListener('click',function(){delFood(parseInt(this.dataset.id))})});
+    }
+    genSug(t,goal);
+}
+
+// ===== SUGGESTIONS =====
+function genSug(t,goal){
+    var el=document.getElementById('sugB');
+    if(!log.length){el.innerHTML='<div class="sg tp"><h4>👋 Welcome!</h4><p>Start logging food to get personalized nutrition suggestions, healthy swaps, and diet insights.</p></div>';return}
+    var s=[],rem=goal-t.cal,cats=log.map(function(f){return f.cat}),meals=log.map(function(f){return f.meal});
+    if(rem>500)s.push({t:'tp',h:'🍽️ '+rem+' kcal remaining',p:'You still have room. Add protein-rich foods like grilled chicken, eggs, dal, paneer, or tofu.'});
+    else if(rem>0)s.push({t:'su',h:'✅ Almost there! '+rem+' kcal left',p:'A light snack like fruits, nuts, yogurt, or a protein shake would round off your day.'});
+    else s.push({t:'dn',h:'⚠️ Over by '+Math.abs(rem)+' kcal!',p:'Go lighter for remaining meals, drink more water, and take a 30-min walk.'});
+    if(t.p<25&&log.length>=2)s.push({t:'wn',h:'🥩 Low Protein ('+Math.round(t.p)+'g)',p:'Aim for 50g+. Add eggs, chicken, paneer, soya chunks, lentils, or Greek yogurt.'});
+    else if(t.p>=50)s.push({t:'su',h:'💪 Great Protein! ('+Math.round(t.p)+'g)',p:'Excellent for muscle repair and satiety. Keep it up!'});
+    if(t.fb<10&&log.length>=3)s.push({t:'wn',h:'🥬 Low Fiber ('+Math.round(t.fb)+'g)',p:'Target 25-30g. Eat more fruits, veggies, beans, oats, and whole grains.'});
+    else if(t.fb>=25)s.push({t:'su',h:'🥦 Fiber Champion! ('+Math.round(t.fb)+'g)',p:'Great for gut health, blood sugar, and satiety!'});
+    if(t.f>70)s.push({t:'dn',h:'🧈 High Fat ('+Math.round(t.f)+'g)',p:'Cut back on fried foods and creamy dishes. Try grilled or baked alternatives.'});
+    var jk=log.filter(function(f){return(f.cat==='dessert'||f.cat==='snack')&&f.cal>200}).length;
+    if(jk>=2)s.push({t:'wn',h:'🍩 '+jk+' High-Cal Snacks/Desserts',p:'Replace some with fruits, dark chocolate, nuts, or Greek yogurt.'});
+    var dc=log.filter(function(f){return f.cat==='drink'}).reduce(function(a,f){return a+f.cal},0);
+    if(dc>300)s.push({t:'wn',h:'🥤 '+dc+' kcal from Drinks!',p:'Switch sugary drinks with green tea, black coffee, lime water, or coconut water.'});
+    if(log.length>=3&&meals.indexOf('Breakfast')===-1)s.push({t:'tp',h:"🌅 Don't Skip Breakfast!",p:'Try oats, idli, eggs, poha, or a smoothie bowl.'});
+    if(log.length>=4&&cats.indexOf('fruit')===-1)s.push({t:'tp',h:'🍎 Add Fruits',p:'Fruits provide essential vitamins, antioxidants, and fiber.'});
+    if(t.c>0&&t.p>0){var r=t.c/t.p;if(r>6)s.push({t:'wn',h:'⚖️ Carb-Heavy ('+r.toFixed(1)+':1)',p:'Balance by adding more protein and reducing bread/rice.'});}
+    if(log.some(function(f){return f.name.toLowerCase().indexOf('rice')!==-1&&f.name.toLowerCase().indexOf('brown')===-1}))s.push({t:'tp',h:'🔄 Try Brown Rice',p:'More fiber, vitamins, and keeps you full longer.'});
+    if(log.some(function(f){return f.name.toLowerCase().indexOf('cola')!==-1||f.name.toLowerCase().indexOf('soft drink')!==-1}))s.push({t:'dn',h:'🚫 Ditch the Soda',p:'Replace with lime water, coconut water, or green tea.'});
+    if(log.some(function(f){return f.name.toLowerCase().indexOf('naan')!==-1}))s.push({t:'tp',h:'🔄 Naan → Roti/Chapati',p:'Save ~140 cal per serving with more fiber.'});
+    if(log.some(function(f){return f.name.toLowerCase().indexOf('fried')!==-1}))s.push({t:'tp',h:'🔄 Fried → Grilled/Baked',p:'Save 100-200+ calories by skipping the oil.'});
+    if(log.length>=2)s.push({t:'tp',h:'💧 Stay Hydrated',p:'Drink 8-10 glasses of water daily for metabolism and energy.'});
+    el.innerHTML=s.map(function(sg){return '<div class="sg '+sg.t+'"><h4>'+sg.h+'</h4><p>'+sg.p+'</p></div>'}).join('');
+}
+</script>
+</body>
+</html>
