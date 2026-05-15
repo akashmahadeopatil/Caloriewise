@@ -635,217 +635,8 @@ function genSug(t,goal){
     el.innerHTML=s.map(function(sg){return '<div class="sg '+sg.t+'"><h4>'+sg.h+'</h4><p>'+sg.p+'</p></div>'}).join('');
 }
 </script>
-<!-- ===== 📸 AI Food Scanner ===== -->
-<div id="scannerModal" style="
-    display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-    background:rgba(0,0,0,0.85); z-index:99999; justify-content:center;
-    align-items:center; padding:20px;
-">
-<div style="
-    background:#161630; border-radius:20px; padding:32px; max-width:600px;
-    width:100%; border:1px solid rgba(255,255,255,0.06); max-height:90vh;
-    overflow-y:auto; position:relative;
-">
-    <button onclick="closeScan()" style="
-        position:absolute; top:14px; right:18px; background:none; border:none;
-        color:#8888A8; font-size:1.5rem; cursor:pointer;
-    ">✕</button>
-    <div style="text-align:center; margin-bottom:20px;">
-        <div style="font-size:2.5rem;">📸</div>
-        <h2 style="font-size:1.3rem; font-weight:800;
-            background:linear-gradient(135deg,#6C63FF,#FF6584);
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
-            AI Food Scanner
-        </h2>
-        <p style="color:#8888A8; font-size:0.85rem;">
-            Take a photo of your food — AI identifies it instantly!
-        </p>
-    </div>
 
-    <!-- Gemini API Key -->
-    <div id="geminiKeySection" style="
-        background:rgba(108,99,255,0.06); padding:12px 16px;
-        border-radius:12px; margin-bottom:16px;
-    ">
-        <label style="font-size:0.78rem; color:#8888A8; display:block;
-            margin-bottom:5px;">🔑 Gemini API Key</label>
-        <div style="display:flex; gap:8px;">
-            <input type="password" id="geminiKey" placeholder="Paste your Gemini API key..."
-                style="flex:1; padding:10px 14px; border-radius:10px;
-                border:2px solid rgba(255,255,255,0.06); background:#12122A;
-                color:#E8E8F0; font-size:0.85rem; font-family:inherit; outline:none;">
-            <button onclick="saveGeminiKey()" style="
-                padding:10px 16px; border-radius:10px; border:none;
-                background:#6C63FF; color:white; font-weight:600;
-                cursor:pointer; font-family:inherit; font-size:0.8rem;
-            ">Save</button>
-        </div>
-        <p style="font-size:0.7rem; color:#555; margin-top:6px;">
-            Free key → <a href="https://aistudio.google.com" target="_blank"
-            style="color:#6C63FF;">aistudio.google.com</a> → Get API Key
-        </p>
-    </div>
-
-    <!-- Camera Input -->
-    <div style="text-align:center; margin:16px 0;">
-        <label style="
-            display:inline-flex; align-items:center; gap:10px;
-            padding:16px 32px; border-radius:14px; cursor:pointer;
-            background:linear-gradient(135deg,#6C63FF,#5A52D5);
-            color:white; font-weight:700; font-size:1rem;
-            transition:all 0.3s;
-        ">
-            📸 Take Photo / Upload
-            <input type="file" accept="image/*" capture="environment"
-                id="foodCamera" onchange="handleFoodPhoto(event)"
-                style="display:none;">
-        </label>
-        <p style="color:#555; font-size:0.75rem; margin-top:8px;">
-            Opens camera on mobile · File picker on desktop
-        </p>
-    </div>
-
-    <!-- Preview -->
-    <div id="photoPreview" style="display:none; text-align:center; margin:16px 0;">
-        <img id="foodPhoto" style="
-            max-width:100%; max-height:250px; border-radius:14px;
-            border:2px solid rgba(108,99,255,0.3);
-        ">
-        <p style="color:#8888A8; font-size:0.8rem; margin-top:8px;">
-            📷 Photo captured — analyzing...
-        </p>
-    </div>
-
-    <!-- Loading -->
-    <div id="scanLoading" style="display:none; text-align:center; padding:20px;">
-        <div style="font-size:2rem; animation:spin 1s linear infinite; display:inline-block;">🔄</div>
-        <p style="color:#8888A8; margin-top:10px; font-size:0.9rem;">
-            🧠 AI is analyzing your food...
-        </p>
-    </div>
-
-    <!-- Results -->
-    <div id="scanResults" style="display:none;"></div>
-</div>
-</div>
-
-<!-- Floating Scanner Button -->
-<button onclick="openScan()" style="
-    position:fixed; bottom:80px; left:20px;
-    background:linear-gradient(135deg,#6C63FF,#9B59B6);
-    color:white; padding:14px 22px; border-radius:30px;
-    border:none; font-weight:700; font-size:0.9rem;
-    cursor:pointer; z-index:999; display:flex;
-    align-items:center; gap:8px; font-family:'Inter',sans-serif;
-    box-shadow:0 4px 25px rgba(108,99,255,0.5);
-    transition:all 0.3s;
-" onmouseover="this.style.transform='translateY(-3px)'"
-   onmouseout="this.style.transform='translateY(0)'">
-    📸 Scan Food
-</button>
-
-<style>
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-</style>
-
-<script>
-// ===== AI FOOD SCANNER =====
-function openScan(){
-    document.getElementById('scannerModal').style.display='flex';
-    var k=localStorage.getItem('geminiKey')||'';
-    document.getElementById('geminiKey').value=k;
-    document.getElementById('scanResults').style.display='none';
-    document.getElementById('photoPreview').style.display='none';
-    document.getElementById('scanLoading').style.display='none';
-}
-function closeScan(){document.getElementById('scannerModal').style.display='none'}
-function saveGeminiKey(){
-    var k=document.getElementById('geminiKey').value.trim();
-    if(k){localStorage.setItem('geminiKey',k);alert('✅ Gemini API key saved!')}
-}
-
-function handleFoodPhoto(e){
-    var file=e.target.files[0]; if(!file)return;
-    var key=localStorage.getItem('geminiKey');
-    if(!key){alert('Please enter your Gemini API key first!');return}
-    // Show preview
-    var reader=new FileReader();
-    reader.onload=function(ev){
-        document.getElementById('foodPhoto').src=ev.target.result;
-        document.getElementById('photoPreview').style.display='block';
-        document.getElementById('scanLoading').style.display='block';
-        document.getElementById('scanResults').style.display='none';
-        // Extract base64
-        var base64=ev.target.result.split(',')[1];
-        analyzeFood(base64,key);
-    };
-    reader.readAsDataURL(file);
-}
-
-async function analyzeFood(base64,key){
-    var prompt="You are a professional nutritionist AI. Analyze this food image and provide:\n"+
-        "1. **Food Name** — What food items you see\n"+
-        "2. **Estimated Calories** — Total kcal for the visible portion\n"+
-        "3. **Macronutrients** — Protein (g), Carbs (g), Fat (g), Fiber (g)\n"+
-        "4. **Health Rating** — Rate 1-10 (10=healthiest)\n"+
-        "5. **Health Benefits** — 2-3 key benefits\n"+
-        "6. **Concerns** — Any health concerns or things to watch out for\n"+
-        "7. **Healthier Alternatives** — 2-3 suggestions to make it healthier\n"+
-        "8. **Best Time to Eat** — When is the best time to consume this food\n\n"+
-        "Format your response clearly with emojis and sections. Be specific with numbers.";
-
-    try{
-        var res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-04-17:generateContent?key='+key,{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-                contents:[{parts:[
-                    {text:prompt},
-                    {inline_data:{mime_type:"image/jpeg",data:base64}}
-                ]}]
-            })
-        });
-        var data=await res.json();
-        document.getElementById('scanLoading').style.display='none';
-        if(data.candidates && data.candidates[0]){
-            var text=data.candidates[0].content.parts[0].text;
-            showResults(text);
-        }else{
-            showResults('⚠️ Could not analyze. Try a clearer photo or check your API key.\n\nError: '+JSON.stringify(data));
-        }
-    }catch(err){
-        document.getElementById('scanLoading').style.display='none';
-        showResults('⚠️ Error connecting to Gemini API. Check your internet and API key.\n\n'+err.message);
-    }
-}
-
-function showResults(text){
-    // Convert markdown-style formatting to HTML
-    var html=text
-        .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-        .replace(/\n/g,'<br>')
-        .replace(/#{1,3}\s?(.*?)(<br>)/g,'<h3 style="color:#6C63FF;margin:14px 0 6px;font-size:1rem;">$1</h3>');
-    document.getElementById('scanResults').innerHTML=
-        '<div style="background:rgba(108,99,255,0.06);border-radius:14px;padding:20px;'+
-        'border-left:4px solid #6C63FF;margin-top:16px;line-height:1.8;'+
-        'color:#E8E8F0;font-size:0.88rem;">'+
-        '<h3 style="color:#43E97B;margin:0 0 12px;font-size:1.1rem;">'+
-        '✅ AI Analysis Complete</h3>'+html+
-        '</div>'+
-        '<button onclick="closeScan()" style="'+
-        'width:100%;margin-top:16px;padding:12px;border-radius:12px;border:none;'+
-        'background:linear-gradient(135deg,#6C63FF,#5A52D5);color:white;'+
-        'font-weight:600;cursor:pointer;font-family:inherit;font-size:0.9rem;">'+
-        '✅ Done — Back to Tracker</button>';
-    document.getElementById('scanResults').style.display='block';
-}
-// Close on bg click
-document.getElementById('scannerModal').addEventListener('click',function(e){
-    if(e.target===this)closeScan();
-});
-</script>
-<!-- ===== End AI Food Scanner ===== -->     
-<!-- ===== 📸 AI FOOD SCANNER (Public — No API Key Needed!) ===== -->
+<!-- ===== 📸 AI FOOD SCANNER v2 (CLEAN — ONE VERSION ONLY) ===== -->
 
 <!-- Floating Scan Button -->
 <button id="scanBtn" style="
@@ -857,117 +648,7 @@ document.getElementById('scannerModal').addEventListener('click',function(e){
     align-items:center; gap:8px; font-family:'Inter',sans-serif;
     box-shadow:0 4px 25px rgba(108,99,255,0.5);
     transition:all 0.3s;
-" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 35px rgba(108,99,255,0.6)'"
-   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 25px rgba(108,99,255,0.5)'">
-    📸 Scan Food with AI
-</button>
-
-<!-- Scanner Modal -->
-<div id="scanModal" style="
-    display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-    background:rgba(0,0,0,0.85); z-index:99999;
-    justify-content:center; align-items:center; padding:16px;
-">
-<div style="
-    background:#161630; border-radius:20px; padding:28px; max-width:600px;
-    width:100%; border:1px solid rgba(255,255,255,0.06); max-height:92vh;
-    overflow-y:auto; position:relative;
-">
-    <!-- Close Button -->
-    <button id="scanClose" style="
-        position:absolute; top:12px; right:16px; background:none; border:none;
-        color:#8888A8; font-size:1.5rem; cursor:pointer; z-index:10; padding:4px 8px;
-    ">✕</button>
-
-    <!-- Header -->
-    <div style="text-align:center; margin-bottom:20px;">
-        <div style="font-size:2.5rem;">📸</div>
-        <h2 style="font-size:1.4rem; font-weight:800;
-            background:linear-gradient(135deg,#6C63FF,#FF6584);
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
-            AI Food Scanner
-        </h2>
-        <p style="color:#8888A8; font-size:0.85rem; margin-top:6px;">
-            Take a photo of your food — AI identifies it & gives full nutrition breakdown instantly!
-        </p>
-    </div>
-
-    <!-- Camera / Upload Button -->
-    <div style="text-align:center; margin:20px 0;">
-        <label id="cameraLabel" style="
-            display:inline-flex; align-items:center; gap:10px;
-            padding:18px 36px; border-radius:16px; cursor:pointer;
-            background:linear-gradient(135deg,#6C63FF,#5A52D5);
-            color:white; font-weight:700; font-size:1rem;
-            transition:all 0.3s; box-shadow:0 4px 20px rgba(108,99,255,0.3);
-        " onmouseover="this.style.transform='translateY(-2px)'"
-           onmouseout="this.style.transform='translateY(0)'">
-            📷 Take Photo / Upload Image
-            <input type="file" accept="image/*" capture="environment"
-                id="foodCam" style="display:none;">
-        </label>
-        <p style="color:#555570; font-size:0.75rem; margin-top:10px;">
-            📱 Opens camera on mobile · 🖥️ File picker on desktop
-        </p>
-    </div>
-
-    <!-- Photo Preview -->
-    <div id="scanPreview" style="display:none; text-align:center; margin:16px 0;">
-        <img id="scanImg" style="
-            max-width:100%; max-height:220px; border-radius:14px;
-            border:2px solid rgba(108,99,255,0.3); object-fit:contain;
-        ">
-    </div>
-
-    <!-- Loading Animation -->
-    <div id="scanLoad" style="display:none; text-align:center; padding:24px;">
-        <div style="font-size:2.2rem; animation:scanSpin 1s linear infinite; display:inline-block;">🔄</div>
-        <p style="color:#E8E8F0; margin-top:12px; font-size:1rem; font-weight:600;">
-            🧠 AI is analyzing your food...
-        </p>
-        <p style="color:#8888A8; font-size:0.8rem; margin-top:6px;">
-            Identifying food, estimating calories & macros
-        </p>
-    </div>
-
-    <!-- Error -->
-    <div id="scanError" style="display:none; text-align:center; padding:20px;
-        background:rgba(255,71,87,0.08); border-radius:14px; border-left:4px solid #FF4757; margin:16px 0;">
-        <p style="color:#FF4757; font-weight:600; margin-bottom:6px;">⚠️ Oops!</p>
-        <p id="scanErrMsg" style="color:#8888A8; font-size:0.85rem;"></p>
-        <button id="retryBtn" style="
-            margin-top:12px; padding:10px 24px; border-radius:10px; border:none;
-            background:#FF4757; color:white; font-weight:600; cursor:pointer;
-            font-family:inherit; font-size:0.85rem;
-        ">🔄 Try Again</button>
-    </div>
-
-    <!-- Results -->
-    <div id="scanRes" style="display:none;"></div>
-</div>
-</div>
-
-<style>
-@keyframes scanSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-</style>
-
-<script>
-<!-- ===== 📸 AI FOOD SCANNER v2 (FIXED — Public, No API Key) ===== -->
-
-<!-- Floating Scan Button -->
-<button id="scanBtn" style="
-    position:fixed; bottom:24px; left:20px;
-    background:linear-gradient(135deg,#6C63FF,#9B59B6);
-    color:white; padding:14px 24px; border-radius:30px;
-    border:none; font-weight:700; font-size:0.9rem;
-    cursor:pointer; z-index:998; display:flex;
-    align-items:center; gap:8px; font-family:'Inter',sans-serif;
-    box-shadow:0 4px 25px rgba(108,99,255,0.5);
-    transition:all 0.3s;
-" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 35px rgba(108,99,255,0.6)'"
-   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 25px rgba(108,99,255,0.5)'">
-    📸 Scan Food with AI
-</button>
+">📸 Scan Food with AI</button>
 
 <!-- Scanner Modal -->
 <div id="scanModal" style="
@@ -975,18 +656,16 @@ document.getElementById('scannerModal').addEventListener('click',function(e){
     background:rgba(0,0,0,0.88); z-index:99999;
     justify-content:center; align-items:center; padding:14px;
 ">
-<div id="scanBox" style="
+<div style="
     background:#161630; border-radius:20px; padding:26px; max-width:580px;
     width:100%; border:1px solid rgba(255,255,255,0.06); max-height:92vh;
     overflow-y:auto; position:relative;
 ">
-    <!-- Close -->
     <button id="scanCloseBtn" style="
         position:absolute; top:10px; right:14px; background:none; border:none;
         color:#8888A8; font-size:1.5rem; cursor:pointer; z-index:10; padding:4px 8px;
     ">✕</button>
 
-    <!-- Header -->
     <div style="text-align:center; margin-bottom:18px;">
         <div style="font-size:2.5rem;">📸</div>
         <h2 style="font-size:1.3rem; font-weight:800;
@@ -999,7 +678,6 @@ document.getElementById('scannerModal').addEventListener('click',function(e){
         </p>
     </div>
 
-    <!-- Camera Button -->
     <div id="cameraSection" style="text-align:center; margin:18px 0;">
         <label id="camLabel" style="
             display:inline-flex; align-items:center; gap:10px;
@@ -1007,8 +685,7 @@ document.getElementById('scannerModal').addEventListener('click',function(e){
             background:linear-gradient(135deg,#6C63FF,#5A52D5);
             color:white; font-weight:700; font-size:1rem;
             transition:all 0.3s; box-shadow:0 4px 20px rgba(108,99,255,0.3);
-        " onmouseover="this.style.transform='translateY(-2px)'"
-           onmouseout="this.style.transform='translateY(0)'">
+        ">
             📷 Take Photo / Upload
             <input type="file" accept="image/*" capture="environment"
                 id="foodCamInput" style="display:none;">
@@ -1018,20 +695,17 @@ document.getElementById('scannerModal').addEventListener('click',function(e){
         </p>
     </div>
 
-    <!-- Preview -->
     <div id="scanPreviewBox" style="display:none; text-align:center; margin:14px 0;">
         <img id="scanPreviewImg" style="
             max-width:100%; max-height:200px; border-radius:14px;
-            border:2px solid rgba(108,99,255,0.3); object-fit:contain;
-        ">
+            border:2px solid rgba(108,99,255,0.3); object-fit:contain;">
         <p style="color:#43E97B; font-size:0.78rem; margin-top:6px;">
             ✅ Photo captured — sending to AI...
         </p>
     </div>
 
-    <!-- Loading -->
     <div id="scanLoadBox" style="display:none; text-align:center; padding:24px;">
-        <div class="scan-spinner"></div>
+        <div style="width:48px;height:48px;margin:0 auto;border:4px solid rgba(108,99,255,0.2);border-top:4px solid #6C63FF;border-radius:50%;animation:scanSp 0.8s linear infinite;"></div>
         <p style="color:#E8E8F0; margin-top:14px; font-size:1rem; font-weight:600;">
             🧠 AI is analyzing your food...
         </p>
@@ -1040,106 +714,62 @@ document.getElementById('scannerModal').addEventListener('click',function(e){
         </p>
     </div>
 
-    <!-- Error -->
     <div id="scanErrorBox" style="display:none; text-align:center; padding:18px;
         background:rgba(255,71,87,0.08); border-radius:14px; border-left:4px solid #FF4757; margin:14px 0;">
-        <p style="color:#FF4757; font-weight:600; margin-bottom:6px; font-size:0.95rem;">⚠️ Oops!</p>
+        <p style="color:#FF4757; font-weight:600; margin-bottom:6px;">⚠️ Oops!</p>
         <p id="scanErrorMsg" style="color:#8888A8; font-size:0.85rem; line-height:1.6;"></p>
         <button id="scanRetryBtn" style="
             margin-top:12px; padding:10px 24px; border-radius:10px; border:none;
             background:#FF4757; color:white; font-weight:600; cursor:pointer;
-            font-family:inherit; font-size:0.85rem; transition:all .3s;
-        ">🔄 Try Again</button>
+            font-family:inherit; font-size:0.85rem;">🔄 Try Again</button>
     </div>
 
-    <!-- Results -->
     <div id="scanResultBox" style="display:none;"></div>
 </div>
 </div>
 
-<!-- Hidden canvas for image compression -->
 <canvas id="compressCanvas" style="display:none;"></canvas>
-
-<style>
-.scan-spinner {
-    width: 48px; height: 48px; margin: 0 auto;
-    border: 4px solid rgba(108,99,255,0.2);
-    border-top: 4px solid #6C63FF;
-    border-radius: 50%;
-    animation: scanSpin 0.8s linear infinite;
-}
-@keyframes scanSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-</style>
+<style>@keyframes scanSp{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
 
 <script>
-// ===== AI FOOD SCANNER v2 — WITH IMAGE COMPRESSION =====
 (function(){
-    var scanModal = document.getElementById('scanModal');
-    var scanBox = document.getElementById('scanBox');
+    var modal = document.getElementById('scanModal');
 
-    // Open
     document.getElementById('scanBtn').addEventListener('click', function(){
-        scanModal.style.display = 'flex';
+        modal.style.display = 'flex';
         resetScan();
     });
 
-    // Close
-    document.getElementById('scanCloseBtn').addEventListener('click', function(){ scanModal.style.display='none'; });
-    scanModal.addEventListener('click', function(e){ if(e.target===scanModal) scanModal.style.display='none'; });
-
-    // Camera
-    document.getElementById('foodCamInput').addEventListener('change', handleFoodPhoto);
-
-    // Retry
+    document.getElementById('scanCloseBtn').addEventListener('click', function(){ modal.style.display='none'; });
+    modal.addEventListener('click', function(e){ if(e.target===modal) modal.style.display='none'; });
+    document.getElementById('foodCamInput').addEventListener('change', handlePhoto);
     document.getElementById('scanRetryBtn').addEventListener('click', resetScan);
 
     function resetScan(){
-        document.getElementById('cameraSection').style.display = 'block';
-        document.getElementById('scanPreviewBox').style.display = 'none';
-        document.getElementById('scanLoadBox').style.display = 'none';
-        document.getElementById('scanErrorBox').style.display = 'none';
-        document.getElementById('scanResultBox').style.display = 'none';
-        document.getElementById('foodCamInput').value = '';
+        document.getElementById('cameraSection').style.display='block';
+        document.getElementById('scanPreviewBox').style.display='none';
+        document.getElementById('scanLoadBox').style.display='none';
+        document.getElementById('scanErrorBox').style.display='none';
+        document.getElementById('scanResultBox').style.display='none';
+        document.getElementById('foodCamInput').value='';
     }
 
-    // ===== IMAGE COMPRESSION (Fixes "payload too large" error) =====
-    function compressImage(file, maxWidth, maxHeight, quality) {
-        return new Promise(function(resolve) {
+    function compressImg(file, maxW, maxH, qual){
+        return new Promise(function(resolve){
             var reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function(e){
                 var img = new Image();
-                img.onload = function() {
-                    var canvas = document.getElementById('compressCanvas');
-                    var ctx = canvas.getContext('2d');
-
-                    // Calculate new dimensions (max 1024px)
-                    var width = img.width;
-                    var height = img.height;
-
-                    if (width > maxWidth) {
-                        height = Math.round(height * maxWidth / width);
-                        width = maxWidth;
-                    }
-                    if (height > maxHeight) {
-                        width = Math.round(width * maxHeight / height);
-                        height = maxHeight;
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-
-                    // Draw compressed image
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    // Get compressed base64 (JPEG at specified quality)
-                    var compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-                    var base64 = compressedDataUrl.split(',')[1];
-
-                    resolve({
-                        base64: base64,
-                        dataUrl: compressedDataUrl,
-                        sizeKB: Math.round(base64.length * 3 / 4 / 1024)
-                    });
+                img.onload = function(){
+                    var cv = document.getElementById('compressCanvas');
+                    var ctx = cv.getContext('2d');
+                    var w = img.width, h = img.height;
+                    if(w > maxW){ h = Math.round(h * maxW / w); w = maxW; }
+                    if(h > maxH){ w = Math.round(w * maxH / h); h = maxH; }
+                    cv.width = w; cv.height = h;
+                    ctx.drawImage(img, 0, 0, w, h);
+                    var dataUrl = cv.toDataURL('image/jpeg', qual);
+                    var b64 = dataUrl.split(',')[1];
+                    resolve({ base64: b64, dataUrl: dataUrl, sizeKB: Math.round(b64.length * 3 / 4 / 1024) });
                 };
                 img.src = e.target.result;
             };
@@ -1147,97 +777,57 @@ document.getElementById('scannerModal').addEventListener('click',function(e){
         });
     }
 
-    async function handleFoodPhoto(e) {
+    async function handlePhoto(e){
         var file = e.target.files[0];
-        if (!file) return;
-
-        // Show loading state immediately
-        document.getElementById('cameraSection').style.display = 'none';
-        document.getElementById('scanLoadBox').style.display = 'block';
-        document.getElementById('scanErrorBox').style.display = 'none';
-        document.getElementById('scanResultBox').style.display = 'none';
-
+        if(!file) return;
+        document.getElementById('cameraSection').style.display='none';
+        document.getElementById('scanLoadBox').style.display='block';
+        document.getElementById('scanErrorBox').style.display='none';
+        document.getElementById('scanResultBox').style.display='none';
         try {
-            // ===== COMPRESS IMAGE BEFORE SENDING =====
-            // Resize to max 1024px and compress to 70% JPEG quality
-            // This reduces a 10MB phone photo to ~100-300KB!
-            var compressed = await compressImage(file, 1024, 1024, 0.7);
-
-            // Show preview
-            document.getElementById('scanPreviewImg').src = compressed.dataUrl;
+            var comp = await compressImg(file, 1024, 1024, 0.7);
+            document.getElementById('scanPreviewImg').src = comp.dataUrl;
             document.getElementById('scanPreviewBox').style.display = 'block';
-
-            console.log('📸 Original: ~' + Math.round(file.size/1024) + 'KB → Compressed: ' + compressed.sizeKB + 'KB');
-
-            // Send compressed image to Netlify function
-            var response = await fetch('/.netlify/functions/analyze-food', {
+            var resp = await fetch('/.netlify/functions/analyze-food', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    imageBase64: compressed.base64,
-                    mimeType: 'image/jpeg'
-                })
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ imageBase64: comp.base64, mimeType: 'image/jpeg' })
             });
-
-            var data = await response.json();
-            document.getElementById('scanLoadBox').style.display = 'none';
-
-            if (data.success && data.analysis) {
-                showScanResult(data.analysis);
-            } else {
-                showScanError(data.error || 'Could not analyze. Please try with a clearer photo.');
-                if (data.debug) console.log('Debug:', data.debug);
-            }
-        } catch(err) {
-            document.getElementById('scanLoadBox').style.display = 'none';
-            showScanError('Connection error. Please check your internet and try again. (' + err.message + ')');
+            var data = await resp.json();
+            document.getElementById('scanLoadBox').style.display='none';
+            if(data.success && data.analysis){ showResult(data.analysis); }
+            else { showError(data.error || 'Could not analyze. Try a clearer photo.'); }
+        } catch(err){
+            document.getElementById('scanLoadBox').style.display='none';
+            showError('Connection error. Check internet and try again. ('+err.message+')');
         }
     }
 
-    function showScanResult(text) {
-        // Convert text formatting to HTML
+    function showResult(text){
         var html = text
             .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#E8E8F0">$1</strong>')
             .replace(/^- (.*)$/gm, '<span style="color:#6C63FF;margin-right:6px;">●</span> $1')
             .replace(/\n/g, '<br>');
-
-        // Wrap known section headers with colors
-        html = html
-            .replace(/(🍽️[^<]*)/g, '<span style="color:#43E97B;font-weight:700;font-size:1.05rem;">$1</span>')
-            .replace(/(🔥[^<]*)/g, '<span style="color:#FF6584;font-weight:700;font-size:1.1rem;">$1</span>')
-            .replace(/(⭐[^<]*)/g, '<span style="color:#FFA502;font-weight:700;">$1</span>');
-
         document.getElementById('scanResultBox').innerHTML =
-            '<div style="background:rgba(108,99,255,0.04);border-radius:16px;padding:20px;' +
-            'border:1px solid rgba(108,99,255,0.12);margin-top:14px;line-height:1.9;' +
-            'color:#8888A8;font-size:0.87rem;">' +
-            '<div style="text-align:center;margin-bottom:12px;">' +
-            '<span style="font-size:1.5rem;">✅</span>' +
+            '<div style="background:rgba(108,99,255,0.04);border-radius:16px;padding:20px;border:1px solid rgba(108,99,255,0.12);margin-top:14px;line-height:1.9;color:#8888A8;font-size:0.87rem;">' +
+            '<div style="text-align:center;margin-bottom:12px;"><span style="font-size:1.5rem;">✅</span>' +
             '<h3 style="color:#43E97B;margin:4px 0 0;font-size:1.05rem;font-weight:700;">AI Analysis Complete</h3></div>' +
             html + '</div>' +
             '<div style="display:flex;gap:10px;margin-top:14px;">' +
-            '<button id="scanDoneBtn" style="flex:1;padding:13px;border-radius:12px;border:none;' +
-            'background:linear-gradient(135deg,#6C63FF,#5A52D5);color:white;' +
-            'font-weight:600;cursor:pointer;font-family:inherit;font-size:0.9rem;">✅ Done</button>' +
-            '<button id="scanAnotherBtn" style="flex:1;padding:13px;border-radius:12px;border:none;' +
-            'background:rgba(255,255,255,0.05);color:#8888A8;' +
-            'font-weight:600;cursor:pointer;font-family:inherit;font-size:0.9rem;">📸 Scan Another</button></div>';
-
-        document.getElementById('scanResultBox').style.display = 'block';
-
-        // Attach button events
-        document.getElementById('scanDoneBtn').addEventListener('click', function(){
-            scanModal.style.display = 'none';
-        });
-        document.getElementById('scanAnotherBtn').addEventListener('click', resetScan);
+            '<button id="scanDoneBtn" style="flex:1;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,#6C63FF,#5A52D5);color:white;font-weight:600;cursor:pointer;font-family:inherit;font-size:0.9rem;">✅ Done</button>' +
+            '<button id="scanAgainBtn" style="flex:1;padding:13px;border-radius:12px;border:none;background:rgba(255,255,255,0.05);color:#8888A8;font-weight:600;cursor:pointer;font-family:inherit;font-size:0.9rem;">📸 Scan Another</button></div>';
+        document.getElementById('scanResultBox').style.display='block';
+        document.getElementById('scanDoneBtn').addEventListener('click', function(){ modal.style.display='none'; });
+        document.getElementById('scanAgainBtn').addEventListener('click', resetScan);
     }
 
-    function showScanError(msg) {
+    function showError(msg){
         document.getElementById('scanErrorMsg').textContent = msg;
-        document.getElementById('scanErrorBox').style.display = 'block';
+        document.getElementById('scanErrorBox').style.display='block';
     }
 })();
 </script>
 <!-- ===== End AI Food Scanner v2 ===== -->
+
 </body>
 </html>
