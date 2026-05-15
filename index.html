@@ -845,5 +845,232 @@ document.getElementById('scannerModal').addEventListener('click',function(e){
 });
 </script>
 <!-- ===== End AI Food Scanner ===== -->     
+<!-- ===== 📸 AI FOOD SCANNER (Public — No API Key Needed!) ===== -->
+
+<!-- Floating Scan Button -->
+<button id="scanBtn" style="
+    position:fixed; bottom:24px; left:20px;
+    background:linear-gradient(135deg,#6C63FF,#9B59B6);
+    color:white; padding:14px 24px; border-radius:30px;
+    border:none; font-weight:700; font-size:0.9rem;
+    cursor:pointer; z-index:998; display:flex;
+    align-items:center; gap:8px; font-family:'Inter',sans-serif;
+    box-shadow:0 4px 25px rgba(108,99,255,0.5);
+    transition:all 0.3s;
+" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 35px rgba(108,99,255,0.6)'"
+   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 25px rgba(108,99,255,0.5)'">
+    📸 Scan Food with AI
+</button>
+
+<!-- Scanner Modal -->
+<div id="scanModal" style="
+    display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.85); z-index:99999;
+    justify-content:center; align-items:center; padding:16px;
+">
+<div style="
+    background:#161630; border-radius:20px; padding:28px; max-width:600px;
+    width:100%; border:1px solid rgba(255,255,255,0.06); max-height:92vh;
+    overflow-y:auto; position:relative;
+">
+    <!-- Close Button -->
+    <button id="scanClose" style="
+        position:absolute; top:12px; right:16px; background:none; border:none;
+        color:#8888A8; font-size:1.5rem; cursor:pointer; z-index:10; padding:4px 8px;
+    ">✕</button>
+
+    <!-- Header -->
+    <div style="text-align:center; margin-bottom:20px;">
+        <div style="font-size:2.5rem;">📸</div>
+        <h2 style="font-size:1.4rem; font-weight:800;
+            background:linear-gradient(135deg,#6C63FF,#FF6584);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+            AI Food Scanner
+        </h2>
+        <p style="color:#8888A8; font-size:0.85rem; margin-top:6px;">
+            Take a photo of your food — AI identifies it & gives full nutrition breakdown instantly!
+        </p>
+    </div>
+
+    <!-- Camera / Upload Button -->
+    <div style="text-align:center; margin:20px 0;">
+        <label id="cameraLabel" style="
+            display:inline-flex; align-items:center; gap:10px;
+            padding:18px 36px; border-radius:16px; cursor:pointer;
+            background:linear-gradient(135deg,#6C63FF,#5A52D5);
+            color:white; font-weight:700; font-size:1rem;
+            transition:all 0.3s; box-shadow:0 4px 20px rgba(108,99,255,0.3);
+        " onmouseover="this.style.transform='translateY(-2px)'"
+           onmouseout="this.style.transform='translateY(0)'">
+            📷 Take Photo / Upload Image
+            <input type="file" accept="image/*" capture="environment"
+                id="foodCam" style="display:none;">
+        </label>
+        <p style="color:#555570; font-size:0.75rem; margin-top:10px;">
+            📱 Opens camera on mobile · 🖥️ File picker on desktop
+        </p>
+    </div>
+
+    <!-- Photo Preview -->
+    <div id="scanPreview" style="display:none; text-align:center; margin:16px 0;">
+        <img id="scanImg" style="
+            max-width:100%; max-height:220px; border-radius:14px;
+            border:2px solid rgba(108,99,255,0.3); object-fit:contain;
+        ">
+    </div>
+
+    <!-- Loading Animation -->
+    <div id="scanLoad" style="display:none; text-align:center; padding:24px;">
+        <div style="font-size:2.2rem; animation:scanSpin 1s linear infinite; display:inline-block;">🔄</div>
+        <p style="color:#E8E8F0; margin-top:12px; font-size:1rem; font-weight:600;">
+            🧠 AI is analyzing your food...
+        </p>
+        <p style="color:#8888A8; font-size:0.8rem; margin-top:6px;">
+            Identifying food, estimating calories & macros
+        </p>
+    </div>
+
+    <!-- Error -->
+    <div id="scanError" style="display:none; text-align:center; padding:20px;
+        background:rgba(255,71,87,0.08); border-radius:14px; border-left:4px solid #FF4757; margin:16px 0;">
+        <p style="color:#FF4757; font-weight:600; margin-bottom:6px;">⚠️ Oops!</p>
+        <p id="scanErrMsg" style="color:#8888A8; font-size:0.85rem;"></p>
+        <button id="retryBtn" style="
+            margin-top:12px; padding:10px 24px; border-radius:10px; border:none;
+            background:#FF4757; color:white; font-weight:600; cursor:pointer;
+            font-family:inherit; font-size:0.85rem;
+        ">🔄 Try Again</button>
+    </div>
+
+    <!-- Results -->
+    <div id="scanRes" style="display:none;"></div>
+</div>
+</div>
+
+<style>
+@keyframes scanSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+</style>
+
+<script>
+// ===== AI FOOD SCANNER — PUBLIC VERSION =====
+(function(){
+    // Open modal
+    document.getElementById('scanBtn').addEventListener('click', function(){
+        document.getElementById('scanModal').style.display = 'flex';
+        resetScanner();
+    });
+
+    // Close modal
+    document.getElementById('scanClose').addEventListener('click', closeScanModal);
+    document.getElementById('scanModal').addEventListener('click', function(e){
+        if(e.target === this) closeScanModal();
+    });
+
+    // Camera input
+    document.getElementById('foodCam').addEventListener('change', handlePhoto);
+
+    // Retry button
+    document.getElementById('retryBtn').addEventListener('click', resetScanner);
+
+    function closeScanModal(){
+        document.getElementById('scanModal').style.display = 'none';
+        resetScanner();
+    }
+
+    function resetScanner(){
+        document.getElementById('scanPreview').style.display = 'none';
+        document.getElementById('scanLoad').style.display = 'none';
+        document.getElementById('scanError').style.display = 'none';
+        document.getElementById('scanRes').style.display = 'none';
+        document.getElementById('foodCam').value = '';
+        document.getElementById('cameraLabel').style.display = 'inline-flex';
+    }
+
+    function handlePhoto(e){
+        var file = e.target.files[0];
+        if(!file) return;
+
+        // Show preview
+        var reader = new FileReader();
+        reader.onload = function(ev){
+            document.getElementById('scanImg').src = ev.target.result;
+            document.getElementById('scanPreview').style.display = 'block';
+            document.getElementById('cameraLabel').style.display = 'none';
+            document.getElementById('scanLoad').style.display = 'block';
+            document.getElementById('scanError').style.display = 'none';
+            document.getElementById('scanRes').style.display = 'none';
+
+            // Extract base64 data
+            var base64 = ev.target.result.split(',')[1];
+            var mimeType = file.type || 'image/jpeg';
+
+            // Call YOUR Netlify serverless function (API key is hidden on server!)
+            analyzeWithServer(base64, mimeType);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    async function analyzeWithServer(base64, mimeType){
+        try {
+            var response = await fetch('/.netlify/functions/analyze-food', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ imageBase64: base64, mimeType: mimeType })
+            });
+
+            var data = await response.json();
+            document.getElementById('scanLoad').style.display = 'none';
+
+            if(data.success && data.analysis){
+                showScanResults(data.analysis);
+            } else {
+                showScanError(data.error || 'Could not analyze the food. Please try a clearer photo.');
+            }
+        } catch(err) {
+            document.getElementById('scanLoad').style.display = 'none';
+            showScanError('Network error. Please check your internet connection and try again.');
+        }
+    }
+
+    function showScanResults(text){
+        // Convert markdown to HTML
+        var html = text
+            .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#E8E8F0">$1</strong>')
+            .replace(/\n• /g, '\n<span style="color:#6C63FF;margin-right:6px;">●</span> ')
+            .replace(/\n/g, '<br>')
+            .replace(/#{1,3}\s?(.*?)(<br>)/g, '<h3 style="color:#6C63FF;margin:16px 0 8px;font-size:1rem;">$1</h3>');
+
+        document.getElementById('scanRes').innerHTML =
+            '<div style="background:rgba(108,99,255,0.05);border-radius:16px;padding:22px;' +
+            'border:1px solid rgba(108,99,255,0.15);margin-top:16px;line-height:1.9;' +
+            'color:#8888A8;font-size:0.88rem;">' +
+            '<div style="text-align:center;margin-bottom:14px;">' +
+            '<span style="font-size:1.5rem;">✅</span>' +
+            '<h3 style="color:#43E97B;margin:6px 0 0;font-size:1.1rem;font-weight:700;">AI Analysis Complete</h3>' +
+            '</div>' + html + '</div>' +
+            '<div style="display:flex;gap:10px;margin-top:16px;">' +
+            '<button onclick="document.getElementById(\'scanModal\').style.display=\'none\'" style="' +
+            'flex:1;padding:13px;border-radius:12px;border:none;' +
+            'background:linear-gradient(135deg,#6C63FF,#5A52D5);color:white;' +
+            'font-weight:600;cursor:pointer;font-family:inherit;font-size:0.9rem;">' +
+            '✅ Done</button>' +
+            '<button onclick="document.getElementById(\'scanPreview\').style.display=\'none\';' +
+            'document.getElementById(\'scanRes\').style.display=\'none\';' +
+            'document.getElementById(\'cameraLabel\').style.display=\'inline-flex\';' +
+            'document.getElementById(\'foodCam\').value=\'\'" style="' +
+            'flex:1;padding:13px;border-radius:12px;border:none;' +
+            'background:rgba(255,255,255,0.05);color:#8888A8;' +
+            'font-weight:600;cursor:pointer;font-family:inherit;font-size:0.9rem;">' +
+            '📸 Scan Another</button></div>';
+        document.getElementById('scanRes').style.display = 'block';
+    }
+
+    function showScanError(msg){
+        document.getElementById('scanErrMsg').textContent = msg;
+        document.getElementById('scanError').style.display = 'block';
+    }
+})();
+</script>
+<!-- ===== End AI Food Scanner ===== -->
 </body>
 </html>
